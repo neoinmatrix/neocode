@@ -1,0 +1,24 @@
+1. 安装zsh
+mac：默认已安装
+linux：yum install zsh
+
+2. 配置oh my zsh
+先安装git yum install git
+curl 安装方式：
+shell> sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+
+wget 安装方式：
+shell> sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+
+3. 切换默认shell
+shell> chsh -s /bin/zsh
+
+4. 安装autojump
+mac: brew install autojump
+linux:  1) git clone git://github.com/joelthelion/autojump.git
+	2) cd autojump
+	3) ./install.py
+
+5. zsh 插件设置
+shell> 修改~/.zshrc 文件的 plugins 字段，比如设置成(git svn osx sudo urltools wd)
