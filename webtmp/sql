@@ -1,0 +1,37 @@
+-- set @district_ids=(select  GROUP_CONCAT(district_id)
+-- from lbs_district_mix  where district_name like '%(旧)%' );
+select @district_ids;
+
+set @district_ids="(130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,
+370903,410114,410307,410317,421302,431113,500121,510102,532514,533106)";
+select * from system_distributor_district where  district_ids in @district_ids;
+
+
+select * from system_cityuser_district where district_id in (@district_ids);
+select * from deduct_district_new where district_id in (@district_ids);
+-- select * from deduct_district where district_id in (@district_ids);
+select * from tolls_suggest where district_id in (@district_ids);
+select * from tolls_suggest_buy where district_id in (@district_ids);
+select * from log_register where district_id in (@district_ids);
+
+
+
+
+-- SELECT * FROM `system_distributor_district` where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,
+-- 370903,410114,410307,410317,421302,431113,500121,510102,532514,533106);
+-- SELECT * FROM `system_cityuser_district` where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,
+-- 370903,410114,410307,410317,421302,431113,500121,510102,532514,533106);
+-- select * from deduct_district_new where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,370903,
+-- 410114,410307,410317,421302,431113,500121,510102,532514,533106);
+-- select * from tolls_suggest where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,370903,
+-- 410114,410307,410317,421302,431113,500121,510102,532514,533106);
+-- select * from tolls_suggest_buy where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,370903,
+-- 410114,410307,410317,421302,431113,500121,510102,532514,533106);
+-- select * from log_register where district_id in (130685,230106,320513,320514,320610,321009,321208,330409,330621,340109,340209,340210,340211,341307,370903,
+-- 410114,410307,410317,421302,431113,500121,510102,532514,533106);
+
+-- alter table lbs_city rename lbs_city_old;
+-- alter table lbs_city_mix rename lbs_city;
+-- 
+-- alter table lbs_district rename lbs_district_old;
+-- alter table lbs_district_mix rename lbs_district;
