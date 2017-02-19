@@ -1,0 +1,12 @@
+#dockerfile images
+FROM centos:latest
+MAINTAINER by Neo
+RUN sed -i 's/#ServerName www.example.com:80/ServerName localhost:80/g' /usr/local/apache/conf/httpd.conf
+#启动apache服务
+RUN /usr/local/apache/bin/httpd
+#复制服务启动脚本并设置权限
+ADD run.sh /usr/local/sbin/run.sh
+RUN chmod 755 /usr/local/sbin/run.sh
+#开放80端口
+EXPOSE 80
+CMD ["/usr/local/sbin/run.sh"]

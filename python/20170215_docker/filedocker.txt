@@ -1,0 +1,40 @@
+流程 
+1.docker run --name centosbase -it -v /home/docker/httpd/:/usr/local/src/ centos:latest
+(主机 /home/docker/httpd/ 目录下有 已经从官网下好的 gz文件 四个 apr apr-util pcre httpd)
+2.yum install -y gcc make gcc-c++ openssl-devel
+(gcc-c++在 编译pcre的时候需要用到 ， openssl-devel 在打开 --enable-ssl 用到)
+3.cd /usr/local/src/ 
+4.
+tar -zxvf apr-1.5.2.tar.gz
+tar -zxvf apr-util-1.5.4.tar.gz
+tar -zxvf pcre-8.40.tar.gz
+tar -zxvf httpd-2.4.25.tar.gz
+5.cd /usr/local/src/apr-1.5.2 
+6.
+./configure --prefix=/usr/local/apr
+make & make install
+7.cd /usr/local/src/apr-util-1.5.4 
+8.
+./configure --prefix=/usr/local/apr-util --with-apr=/usr/local/apr/
+make & make install
+9.cd /usr/local/src/pcre-8.40 
+10.
+./configure --prefix=/usr/local/pcre
+11.
+make & make install
+12.
+cd /usr/local/src/httpd-2.4.25
+13.
+./configure --prefix=/usr/local/apache --enable-so --enable-ssl --enable-cgi --enable-rewrite --with-zlib --with-pcre --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --enable-modules=most --enable-mpms-shared=all --enable-proxy --enable-proxy-fcgi --with-mpm=event
+#检查通过无报错之后可以先把 docker环境 先做成镜像以后可以在此基础上修改
+14.
+docker commit centosbase neo/httpd:v1 以后httpd 都可以从当前镜像开始运作
+15.
+docker run --name httpdevent -it -v /home/docker/httpd/:/usr/local/src/ neo/httpd:v1
+使用event 模式编译 httpd
+其实这里可以使用 Dockerfile 文件 去构建 但是速度太慢
+（大概需要三分钟）
+
+
+
+
