@@ -4,7 +4,8 @@ import pandas
 import random
 import math
 
-from IPython.parallel import Client
+# from IPython.parallel import Client
+import ipyparallel as ipp
 from numpy.linalg import norm
 from pandas import DataFrame
 from numpy.random import normal
@@ -15,7 +16,6 @@ def loss(R, U, V):
     E = 0.0
     for (t, i, j, rij) in R.itertuples():
         E += (rij - np.dot(U[i], V[j]))**2  + norm(U[i]) + norm(V[j])
-        
     return E 
 
 def sgd(alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
@@ -50,15 +50,17 @@ def sgd(alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
                 raise ValueError('overflow')
             
             t += 1
-
-        return U, V
+    return U, V
 
 def fit(df, alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
 
-    rc = Client()
+    # rc = Client()
+    rc=ipp.Client()
     dview = rc[:]
+    # print rc
     k = float(len(rc))
-
+    # print k
+    # exit()
     with dview.sync_imports():
         import random 
 
@@ -102,12 +104,21 @@ if __name__ == '__main__':
 
     V = DataFrame(normal(size=(latent_dimensions, n_items)),
                   columns=df['item_id'].unique())
+    # print U[0]
+    
+    # print (latent_dimensions, n_items)
+    # print (latent_dimensions, n_users)
     # print df.head()
+    # print df.info()
+    # print V.head()
     # print V.info()
+    # print df['user_id'].unique()
+    # print df['user_id'].nunique()
 
-    print loss(df, U, V)
+    # print normal(size=(latent_dimensions, n_items))
+    # print loss(df, U, V)
+    # exit()
+    # U, V = fit(df, alpha=alpha, eta0=eta0, power_t=power_t, 
+    #            epochs=epochs, latent_dimensions=latent_dimensions)
 
-    U, V = fit(df, alpha=alpha, eta0=eta0, power_t=power_t, 
-               epochs=epochs, latent_dimensions=latent_dimensions)
-
-    print loss(df, U, V)
+    # print loss(df, U, V)
