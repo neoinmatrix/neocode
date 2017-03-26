@@ -22,7 +22,11 @@ for train_index, test_index in kf.split(features):
     for i,j in zip(result,target[test_index]):
         predicts[i,j]+=1
 print predicts
-# plot_confusion_matrix(predicts,labels,"ann_iris","confusion matrix of ann predict of iris")
+right=0
+for i in range(len(predicts[0])):
+    right+=predicts[i,i]
+print float(right)/float(np.sum(predicts))
+plot_confusion_matrix(predicts,labels,"ann_iris","confusion matrix of ann predict of iris")
 exit()
 
 # coding by self ======================================
@@ -39,3 +43,7 @@ for train_index, test_index in kf.split(features):
     for i,j in zip(result,target[test_index]):
         predicts[i,j]+=1
 print predicts
+right=0
+for i in range(len(predicts[0])):
+    right+=predicts[i,i]
+print float(right)/float(np.sum(predicts))
