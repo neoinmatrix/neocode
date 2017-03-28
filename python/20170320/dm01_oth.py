@@ -50,6 +50,8 @@ def fit_model(X, y, nn_hdim, num_passes=200, print_loss=False):
         z1 = X.dot(W1) + b1
         a1 = np.tanh(z1)
         z2 = a1.dot(W2) + b2
+        z3 = np.tanh(z2)
+        z2=z3
         exp_scores = np.exp(z2)
         probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
         # Backpropagation
