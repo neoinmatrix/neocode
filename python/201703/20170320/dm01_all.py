@@ -8,7 +8,7 @@ from utils import *
 
 import pandas as pd
 
-data=pd.read_csv("./a.csv",header=None)
+data=pd.read_csv("./pima.csv",header=None)
 
 # print data["0"]
 # print data.head()

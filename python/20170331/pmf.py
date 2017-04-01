@@ -18,35 +18,29 @@ def loss(R, U, V):
         E += (rij - np.dot(U[i], V[j]))**2  + norm(U[i]) + norm(V[j])
     return E 
 
-def sgd(alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
+def sgd(df,alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
     """ stochastic gradient descent """
-
     n_users = df['user_id'].nunique()
     n_items = df['item_id'].nunique()
-
     U = DataFrame(normal(size=(latent_dimensions, n_users)),
                   columns=df['user_id'].unique())
-
     V = DataFrame(normal(size=(latent_dimensions, n_items)),
                   columns=df['item_id'].unique())
-
     t = 1.0
     index = df.index.values
     random.shuffle(index)
-
     for epoch in xrange(epochs):
-
         for count, pos in enumerate(index):
-
             i, j, rij = df.ix[pos] 
             eta =  eta0 / (t ** power_t)
 
-            rhat = dot(U[i], V[j])
+            rhat = np.dot(U[i], V[j])
 
             U[i] = U[i] - eta * ((rhat - rij) * V[j] + alpha * U[i])
             V[j] = V[j] - eta * ((rhat - rij) * U[i] + alpha * V[j])
-
-            if isnan(U.values).any() or isnan(V.values).any():
+            # print ((rhat - rij) * V[j] + 64 * U[i])
+            # exit()
+            if np.isnan(U.values).any() or np.isnan(V.values).any():
                 raise ValueError('overflow')
             
             t += 1
@@ -80,18 +74,26 @@ def fit(df, alpha=0.1, eta0=0.01, power_t=0.25, epochs=3, latent_dimensions=10):
     return U, V
 
 if __name__ == '__main__':
-
+    # strx=""
+    # for i in range(1,10):
+    #     for j in range(2,12):
+    #         strx+="%d,%d,%d\n"%(i,j,4)
+    # print strx
+    # f=open("autocreate.csv",'w')
+    # f.write(strx)
+    # f.close()
+    # exit()
     latent_dimensions = 200
     alpha = 0.1
     eta0 = 0.01
-    epochs = 5
+    epochs = 10
     power_t = 0.25
 
     # read data and fix indexing 
     # pandas.read_csv()
-    df = pandas.read_csv('sdata.csv', header='infer',  sep=',', 
-         names=['user_id', 'item_id', 'rating', 'timestamp'])
-    df=df.drop(["timestamp"], axis=1)
+    df = pandas.read_csv('autocreate.csv', header='infer',  sep=',', 
+         names=['user_id', 'item_id', 'rating'])
+    # df=df.drop(["timestamp"], axis=1)
     df[['user_id', 'item_id']] -= 1
     df['rating'] -= df['rating'].mean()
 
@@ -100,25 +102,21 @@ if __name__ == '__main__':
 
     U = DataFrame(normal(size=(latent_dimensions, n_users)),
                   columns=df['user_id'].unique())
-    # print U.head()
+    # print U.info()
 
     V = DataFrame(normal(size=(latent_dimensions, n_items)),
                   columns=df['item_id'].unique())
     # print U[0]
-    
-    # print (latent_dimensions, n_items)
-    # print (latent_dimensions, n_users)
-    # print df.head()
-    # print df.info()
-    # print V.head()
-    # print V.info()
-    # print df['user_id'].unique()
-    # print df['user_id'].nunique()
 
     # print normal(size=(latent_dimensions, n_items))
-    # print loss(df, U, V)
+    print loss(df, U, V)
     # exit()
     # U, V = fit(df, alpha=alpha, eta0=eta0, power_t=power_t, 
     #            epochs=epochs, latent_dimensions=latent_dimensions)
 
-    # print loss(df, U, V)
+    U, V = sgd(df, alpha=alpha, eta0=eta0, power_t=power_t, 
+               epochs=epochs, latent_dimensions=latent_dimensions)
+    print loss(df, U, V)
+    U.to_csv("./U.csv")
+    V.to_csv("./V.csv")
+   
