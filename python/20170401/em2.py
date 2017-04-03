@@ -63,6 +63,6 @@ def run(Sigma,Mu1,Mu2,k,N,iter_num,Epsilon):
             break  
 if __name__ == '__main__':  
     # isdebug=True
-    run(6,40,20,2,1000,1000,0.0001)  
+    run(6,30,20,2,1000,1000,0.0001)  
     plt.hist(X[0,:],50)  
     plt.show()  
