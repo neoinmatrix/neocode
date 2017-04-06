@@ -92,4 +92,3 @@ if __name__ == '__main__':
     # print loss(rt, U, V)
     U.to_csv("./U.csv")
     V.to_csv("./V.csv")
-   
