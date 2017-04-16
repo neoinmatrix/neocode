@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     U = DataFrame(normal(size=(latent_dims, n_users)), columns=df['user_id'].unique())
     V = DataFrame(normal(size=(latent_dims, n_items)),columns=df['item_id'].unique())
-
+    
     # print loss(df, U, V)
     # U, V = mf(df, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters)
     U, V = mf(df, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters,converge=converge)

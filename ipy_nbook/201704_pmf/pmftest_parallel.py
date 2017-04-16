@@ -16,14 +16,21 @@ def loss(R, U, V):
         E += (Rij - np.dot(U[i], V[j]))**2  + norm(U[i]) + norm(V[j])
     return E
 
-def mf(df,n_users,n_items,latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=0.01, iters=3,converge=1e-5):
+def rmse(R, U, V,means):
+    E = 0.0
+    for (t, i, j, Rij) in R.itertuples():
+    # for iter in range(R.index): 
+        E += (Rij - means - np.dot(U[i], V[j]))**2 
+    return E/float(len(R.index))
+
+def mf(n_users,n_items,latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=0.01, iters=3,converge=1e-5):
     U = DataFrame(normal(size=(latent_dims, n_users)), columns=[i for i in range(n_users)])
     V = DataFrame(normal(size=(latent_dims, n_items)), columns=[i for i in range(n_items)])
     t = 1.0
     index = df.index.values
     likelihood=0.0
     likelihood_old=1.0
-    # import numpy as np
+    import numpy as np
     # f=open('d_'+str(os.getpid()),'w')
     # f.write("hesdfsdf")
     # f.close()
@@ -44,8 +51,8 @@ def mf(df,n_users,n_items,latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=0
             t += 1
             if int(t)%2000==0:
                 break
-        tmpx="iterx %d %f %f %f"%(iterx,likelihood,likelihood_old,(np.fabs(likelihood-likelihood_old)/likelihood_old))
-        print tmpx
+        # tmpx="iterx %d %f %f %f"%(iterx,likelihood,likelihood_old,(np.fabs(likelihood-likelihood_old)/likelihood_old))
+        # print tmpx
 
         # f=open('d_'+str(os.getpid()),'w')
         # f.write(tmpx)
@@ -78,40 +85,83 @@ def fit(df,n_users,n_items,latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=
     V = reduce(add, (r[1] for r in res))/k
     return U, V
 
-def predict(df,U,V):
-    pass
+# def predict(df,U,V):
+#     pass
+def direct():
+    n_users = 1769
+    n_items = 21493
+    latent_dims = 30       # the latent factor dimensions
+    import time
+    start = time.clock()
+   
 
+    # U = DataFrame(normal(size=(latent_dims, n_users)), columns=[i for i in range(n_users)])
+    # V = DataFrame(normal(size=(latent_dims, n_items)), columns=[i for i in range(n_items)])
+    # U=DataFrame.read_csv("./U.csv")
+    U=pandas.read_csv("./U.csv")
+    # U.read_csv("./U.csv")
+    # V.read_csv("./V.csv")
+    # print U.head()
+    # print U.describe()
+    print U.index
+    # dftest = pandas.read_csv('n_user_test.df', header='infer', names=['user_id', 'item_id', 'rating'])
+    # U=
+    # U.to_csv("./U.csv")
+    # V.to_csv("./V.csv")
+    # print "rmse:",rmse(dftest,U,V,means)
+    pass
 if __name__ == '__main__':
-    latent_dims = 20       # the latent factor dimensions
+    # if True==True:
+    #     direct()
+    #     exit()
+
+
+    latent_dims = 30       # the latent factor dimensions
     lambda_u=0.1            # the rate for U
     lambda_v=0.1            # the rate for V
     learn_rate = 0.01       # the learning in gradient descent
-    iters = 50             # the iterations in learning
-    converge=1e-3           # the converge when smaller then stop
+    iters = 100             # the iterations in learning
+    converge=1e-4           # the converge when smaller then stop
     
     df = pandas.read_csv('n_user_train.df', header='infer', names=['user_id', 'item_id', 'rating'])
+    dftest = pandas.read_csv('n_user_test.df', header='infer', names=['user_id', 'item_id', 'rating'])
     # df[['user_id', 'item_id']] -= 1
-    df['rating'] -= df['rating'].mean()
-    # print df.index
+    df['rating']-=df['rating'].mean()
+    dftest['rating']-=dftest['rating'].mean()
+    # means=df['rating'].mean()
+    # df['rating'] -= means
+    # means_test= means-dftest['rating'].mean()
+    # dftest['rating'] -= means_test
+    # means= means-means_test
+    # exit()
+    # dftest['rating'] -= dftest['rating'].mean()
+
+    index=np.array([i for i in df.index])
+    np.random.shuffle(index)
+    df=df.ix[index]
     # 1189616.27619
 
-    # exit()
     # users:1769
     # items:21493
     # line:39133
     n_users = 1769
     n_items = 21493
-    U = DataFrame(normal(size=(latent_dims, n_users)), columns=[i for i in range(n_users)])
-    V = DataFrame(normal(size=(latent_dims, n_items)), columns=[i for i in range(n_items)])
     import time
     start = time.clock()
+   
+
+    U = DataFrame(normal(size=(latent_dims, n_users)), columns=[i for i in range(n_users)])
+    V = DataFrame(normal(size=(latent_dims, n_items)), columns=[i for i in range(n_items)])
+
     # print loss(df, U, V)
     # U, V = mf(df, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters)
-    U, V = mf(df,n_users,n_items, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters,converge=converge)
+    U, V = fit(df,n_users,n_items, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters,converge=converge)
     end = time.clock()
     print "read: %f s" % (end - start)
-    
+
     print loss(df, U, V)
     U.to_csv("./U.csv")
     V.to_csv("./V.csv")
+    means=0.0
+    print "rmse:",rmse(dftest,U,V,means)
    
