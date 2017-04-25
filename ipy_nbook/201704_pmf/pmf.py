@@ -29,8 +29,10 @@ def mf(df, latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=0.01, iters=3,co
         for count, pos in enumerate(index):
             i, j, Rij = df.ix[pos] 
             Ruv = np.dot(U[i], V[j])
+            tmp_U=U[i]
             U[i] = U[i] - learn_rate * ((Ruv - Rij) * V[j] + lambda_u * U[i])
-            V[j] = V[j] - learn_rate * ((Ruv - Rij) * U[i] + lambda_v * V[j])
+            # V[j] = V[j] - learn_rate * ((Ruv - Rij) * U[i] + lambda_v * V[j])
+            V[j] = V[j] - learn_rate * ((Ruv - Rij) * tmp_U + lambda_v * V[j])
             likelihood+= 0.5*np.dot(U[i],U[i])*lambda_u
             likelihood+= 0.5*np.dot(V[i],V[i])*lambda_v
             if np.isnan(U.values).any() or np.isnan(V.values).any():
@@ -63,7 +65,7 @@ def fit(df, latent_dims=10,lambda_u=0.1,lambda_v=0.1, learn_rate=0.01, iters=3,c
     return U, V
 
 def predict(df,U,V):
-
+    pass
 
 if __name__ == '__main__':
     latent_dims = 20       # the latent factor dimensions
@@ -83,10 +85,10 @@ if __name__ == '__main__':
     U = DataFrame(normal(size=(latent_dims, n_users)), columns=df['user_id'].unique())
     V = DataFrame(normal(size=(latent_dims, n_items)),columns=df['item_id'].unique())
     
-    # print loss(df, U, V)
+    print loss(df, U, V)
     # U, V = mf(df, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters)
     U, V = mf(df, latent_dims=latent_dims, lambda_u=lambda_u,lambda_v=lambda_v, learn_rate=learn_rate, iters=iters,converge=converge)
-    # print loss(df, U, V)
+    print loss(df, U, V)
     # U.to_csv("./U.csv")
     # V.to_csv("./V.csv")
    
