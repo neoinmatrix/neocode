@@ -1,11 +1,6 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : us.neomatrix.cn
-Source Server Version : 50173
-Source Host           : us.neomatrix.cn:3307
-Source Database       : test
-
 Target Server Type    : MYSQL
 Target Server Version : 50173
 File Encoding         : 65001
