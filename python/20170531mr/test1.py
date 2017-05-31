@@ -1,5 +1,6 @@
 # coding=utf-8
 import numpy as np
+import matplotlib.pyplot as plt
 
 labels=[0]*3000
 goals=['']*3000
@@ -38,12 +39,54 @@ def datadeal():
 
             labels[idx]=label
             goals[idx]=goal
-            mouses[idx]=mouse.split(';')
+            mouses[idx]=mouse
             # marr=mouse.split(';')
             speeds[idx]=calc(mouse)
     print speeds
+
+def datadealsingle():
+    with open('./dsjtzs_txfz_training.txt','r') as f:
+        line=f.readline()
+        linecols=line.split(' ')
+        idx=int(linecols[0])-1
+        mouse=linecols[1]
+        goal=linecols[2]
+        label=int(linecols[3])
+
+        labels[idx]=label
+        goals[idx]=goal
+        mouses[idx]=mouse
+        # marr=mouse.split(';')
+        speeds[idx]=calc(mouse.split(';'))
+        # print mouse
+        return mouse.split(';')
+
+def draw(data):
+    x_arr=data[0]
+    y_arr=data[1]
+    plt.plot(x_arr,y_arr)
+    plt.show()
+
+def dealpos(mouse):
+    m_x=[]
+    m_y=[]
+    mouse_arr=mouse.split(';')
+    for v in mouse_arr:
+        v_arr=v.split(',')
+        if len(v_arr)!=3:
+            continue
+        x=int(v_arr[0])
+        y=int(v_arr[1])
+        m_x.append(x)
+        m_y.append(y)
+    return [m_x,m_y]
 def main():
-    datadeal()
+    # datadeal()
+    datadealsingle()
+    # pos1=dealpos(mouses[0])
+    # pos2=dealpos(mouses[2998])
+    # draw(pos1)
+    # draw(pos2)
 
 if __name__=='__main__':
     main()
