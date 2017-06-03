@@ -38,7 +38,7 @@ def posdeal(mouse):
     return [x_arr,y_arr,t_arr]
 
 def datadeal():
-    with open('./dsjtzs_txfz_training.txt','r') as f:
+    with open('./data/dsjtzs_txfz_training.txt','r') as f:
         line='1'
         while line:
             line=f.readline()
@@ -80,11 +80,14 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d') 
 
 draw3d(posdeal(mouses[0]),ax)
+draw3d(posdeal(mouses[10]),ax)
 
 # arr=goals[0].split(',')
 # drawgoal([float(arr[0]),float(arr[1]),0],ax)
 # print arr
-draw3d(posdeal(mouses[2798]),ax)
+for i in range(10):
+    draw3d(posdeal(mouses[2698+i]),ax)
+    draw3d(posdeal(mouses[2798+i]),ax)
 # arr=goals[2798].split(',')
 
 # drawgoal([float(arr[0]),float(arr[1]),0],ax)

@@ -45,7 +45,7 @@ def datadeal():
     print speeds
 
 def datadealsingle():
-    with open('./dsjtzs_txfz_training.txt','r') as f:
+    with open('./data/dsjtzs_txfz_training.txt','r') as f:
         line=f.readline()
         linecols=line.split(' ')
         idx=int(linecols[0])-1
@@ -58,7 +58,6 @@ def datadealsingle():
         mouses[idx]=mouse
         # marr=mouse.split(';')
         speeds[idx]=calc(mouse.split(';'))
-        # print mouse
         return mouse.split(';')
 
 def draw(data):
@@ -80,18 +79,15 @@ def dealpos(mouse):
         m_x.append(x)
         m_y.append(y)
     return [m_x,m_y]
-def main():
+
+if __name__=='__main__':
+    datadealsingle()
     # datadeal()
     datadealsingle()
     # pos1=dealpos(mouses[0])
     # pos2=dealpos(mouses[2998])
     # draw(pos1)
     # draw(pos2)
-
-if __name__=='__main__':
-    main()
-    pass
-
 
 #TODO1: draw the picture of mouse path
 #TODO2: analyst the data

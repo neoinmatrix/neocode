@@ -26,7 +26,7 @@ def calc(mouse):
         return length/elapse
 
 def getdata():
-    with open('./dsjtzs_txfz_training.txt','r') as f:
+    with open('./data/dsjtzs_txfz_training.txt','r') as f:
         line='1'
         while line:
             line=f.readline()
