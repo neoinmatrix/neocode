@@ -15,7 +15,7 @@ def get_k(lbdnn,p):
             break 
     return k
 
-def pca(X,p=0.99):  
+def pca(X,p=0.99,getnew=False):  
     n,m=X.shape
     means=np.mean(X,axis=1) 
     for i in range(n):
@@ -30,14 +30,16 @@ def pca(X,p=0.99):
     sort_lbd=sort_lbd[:k]
     k_P=P[:,sort_lbd]
     Y=k_P.T*X
-    newX= k_P*k_P.T*X
-    for i in range(len(means)):
-        newX[i]+=means[i]
+    newX=''
+    if getnew==True:
+        newX= k_P*k_P.T*X
+        for i in range(len(means)):
+            newX[i]+=means[i]
     return Y,newX 
 
 if __name__ == '__main__':
     X=np.array([[-1,-1,0,2,0],[-2,0,0,1,1]],dtype=np.float)
-    Y,newX=pca(X,0.8)
+    Y,newX=pca(X,0.8,True)
     print Y
     print newX
     dw.draw(X,Y,newX)

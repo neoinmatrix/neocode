@@ -39,7 +39,7 @@ def draw(X,Y,newX):
 def drawpcadata(start,dims):
     n=dims[0]
     m=dims[1]
-    pca = decomposition.PCA()
+    pca = decomposition.PCA(n_components=28)
     for i in range(n):
         for j in range(m):
             idx=i*m+j+1
@@ -49,34 +49,18 @@ def drawpcadata(start,dims):
             pca.fit(img)
             pca_result=pca.transform(img)
             plt.imshow(pca_result)
-    plt.show()
+    # plt.show()
 
 if __name__=="__main__":
     train=pd.read_csv("mnist.csv")
     # plotnumber(train,11)
-    # drawnumber(0,[5,5])
-    drawpcadata(0,[2,2])
+    fig2 = plt.figure('fig2')
+    drawpcadata(0,[5,5])
+    fig2.show()
+
+    fig1 = plt.figure('fig1')
+    drawnumber(0,[5,5])
+    fig1.show()
 
 
-    # img=train.iloc[2,1:].values.reshape(28,28)
-    # img=img/128
-    # # print img 
-    # # img=img.reshape([1,len(img)])
-    # # print img
-    # pca = decomposition.PCA()
-    # print pca.fit(img)
-    # pca_result=pca.transform(img)
-
-    # pcadata=[0.0]*28
-    # for i in range(28):
-    #     pcadata[i]=pca_result[:,i].sum()
-    # pcadata=sorted(pcadata)
-    # pcadata=pcadata[-1::-1]
-    # print pcadata
-    # # print pcadata
-    # plt.imshow(pca_result)
-    # # plt.plot([i for i in range(1,29)],pcadata)
-    # plt.show()
-    # print pca_result.shape
-    # # train_pca = pd.DataFrame()
 
