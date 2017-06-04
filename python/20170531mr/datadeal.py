@@ -1,107 +1,66 @@
 # coding=utf-8
+import dataset
+import datadeal
 import numpy as np
+from sklearn.model_selection import KFold
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn import  metrics
 
-labels=np.zeros((3000,1))
-goals=['']*3000
-mouses_raw=['']*3000
-speeds=[0.0]*3000
-mouses=['']*3000
+class DataTrain:
+    clf=''
 
+    def train(self,clf,X,y):
+        clf.fit(X,y)
+        self.clf=clf
 
-def calc(mouse):
-    marr=mouse.split(';')
-    starts=marr[0].split(',')
-    ends=marr[-2].split(',')
-    sx=float(starts[0])
-    sy=float(starts[1])
-    st=float(starts[2])
-    ex=float(ends[0])
-    ey=float(ends[1])
-    et=float(ends[2])
-    length=((sx-ex)**2+(sy-ey)**2)**0.5
-    elapse=et-st
-    if elapse<1e-10:
-        return 1000000
-    else:
-        return length/elapse
+    def trainTest(self,clf,X,y):
+        kf = KFold(n_splits=10, shuffle=True,random_state=np.random.randint(len(y)))
+        accuracy=0.0
+        for train_index, test_index in kf.split(range(len(y))):
+            X_train=X[train_index]
+            y_train=y[train_index]
+            X_test=X[test_index]
+            expected=y[test_index]
+            clf.fit(X_train,y_train)
+            predicted = clf.predict(X_test)
+            accy_tmp=metrics.accuracy_score(expected, predicted)
+            accuracy+=accy_tmp
+            print "predited rate:%f"%accy_tmp
+        print accuracy/10.0
 
-def getdata():
-    with open('./data/dsjtzs_txfz_training.txt','r') as f:
-        line='1'
-        while line:
-            line=f.readline()
-            if line=='':
+    def getResult(self,X):
+        return self.clf.predict(X)
+
+    def testResultAll(self,ds,f,savepath='./data/result.txt'):
+        allnum=0
+        machine=0
+        machine_list=[]
+        while True:
+            idx,mouse,goal,label=ds.readTestFile()
+            if idx==False:
                 break
-            linecols=line.split(' ')
-            idx=int(linecols[0])-1
-            mouse=linecols[1]
-            goal=linecols[2]
-            label=int(linecols[3])
+            item=f(idx,mouse,goal,label)
+            r=self.getResult(item)
+            allnum+=1
+            if allnum%1000==0:
+                print idx,machine
+            if r>0:
+                continue
+            else:
+                machine+=1
+                machine_list.append(idx)
 
-            labels[idx]=label
-            goals[idx]=goal
-            mouses_raw[idx]=mouse
-            # marr=mouse.split(';')
-            # speeds[idx]=calc(mouse)
-    # print speeds
+        print "all machine data:%d"%machine
+        result=''
+        for v in machine_list:
+            result+='%s\n'%v
+        with open(savepath,'w') as f:
+            f.write(result)
+        print "ok"
 
-def posdata(mouse):
-    marr=mouse.split(';')
-    x_arr=[]
-    y_arr=[]
-    t_arr=[]
-    for v in marr:
-        varr=v.split(',')
-        if len(varr)!=3:
-            continue
-        x=float(varr[0])
-        y=float(varr[1])
-        t=float(varr[2])
-        x_arr.append(x)
-        y_arr.append(y)
-        t_arr.append(t)
-
-    x_arr=np.array(x_arr)
-    y_arr=np.array(y_arr)
-    t_arr=np.array(t_arr)
-    # if x_arr.max()!=x_arr.min():
-    #     x_arr=(x_arr-x_arr.min())/(x_arr.max()-x_arr.min())
-    # else:
-    #     x_arr=(x_arr-x_arr.min())/x_arr.max()
-    # if y_arr.max()!=y_arr.min():
-    #     y_arr=(y_arr-y_arr.min())/(y_arr.max()-y_arr.min())
-    # else:
-    #     y_arr=(y_arr-y_arr.min())/y_arr.max()
-    # if t_arr.max()!=t_arr.min():
-    #     t_arr=(t_arr-t_arr.min())/(t_arr.max()-t_arr.min())
-    # else:
-    #     t_arr=(t_arr-t_arr.min())/t_arr.max()
-    return np.array([x_arr,y_arr,t_arr])
-
-def fatdata():
-    for i in range(len(mouses_raw)):
-        mouses[i]=posdata(mouses_raw[i])
-
-def initdata():
-    getdata()
-    fatdata()
-
-
-def main():
-    # print mouses_raw[1]
-    # print posdata(mouses_raw[492])
-    pass 
-    # print labels
-    # print posdata(mouses_raw[0])
-    # print mouses[0][0]
-    # datadeal()
-
-if __name__=='__main__':
-    main()
+if __name__=="__main__":
     pass
+    
 
 
-#TODO1: draw the picture of mouse path
-#TODO2: analyst the data
-#TODO3: the first and last drive the speed
-#TODO4: fast to find the result
