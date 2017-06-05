@@ -1,6 +1,8 @@
 # coding=utf-8
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  
+from matplotlib import pylab
+
 import dataset
 import datadraw
 
@@ -17,7 +19,7 @@ class DataDraw():
         plt.plot(x,y)
 
     def drawgoal(self,data,c='r'):
-        plt.scatter(data[0],data[1])
+        plt.scatter(data[0],data[1],c=c)
 
     def drawbatchgoal(self,data,c='r'):
         plt.scatter(data[:,0],data[:,1],c=c)
@@ -94,6 +96,34 @@ def drawScatter():
     dw.drawbatchgoal(goals[2600:],'b')
     
     plt.show()
+
+def plot_confusion_matrix(cm, genre_list, name, title,max,save=False):
+    pylab.clf()
+    pylab.matshow(cm, fignum=False, cmap='Greens', vmin=0, vmax=max)
+    ax = pylab.axes()
+    ax.set_xticks(range(len(genre_list)))
+    ax.set_xticklabels(genre_list)
+    ax.xaxis.set_ticks_position("bottom")
+    ax.set_yticks(range(len(genre_list)))
+    ax.set_yticklabels(genre_list)
+    cm=cm.T
+    for i in range(len(cm)):
+        # t=len(cm[0])-i
+        for j in range(len(cm[0])):
+            if cm[i,j]<1e-2:
+                continue
+            pylab.text(i, j, '%.2f'%cm[i,j])
+
+    pylab.title(title)
+    pylab.colorbar()
+    pylab.grid(True)
+    pylab.show()
+    pylab.xlabel('Predicted class')
+    pylab.ylabel('True class')
+    pylab.grid(True)
+    if save==True:
+        pylab.savefig(os.path.join(CHART_DIR, "confusion_matrix_%s.png"%name), bbox_inches="tight")
+
 
 if __name__=="__main__":
    # draw3d()

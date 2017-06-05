@@ -59,6 +59,16 @@ class DataTrain:
             f.write(result)
         print "ok"
 
+def calcScore(rm,jm,rms=20000.0):
+    P=rm/jm
+    R=rm/rms
+    s=(5*P*R)/(2*P+3*R)
+    return s
+    
+def calcScoreRerve(s,jm,rms=20000.0):
+    x=s*(2*rms+3*jm)/5.0
+    return x
+
 if __name__=="__main__":
     pass
     
