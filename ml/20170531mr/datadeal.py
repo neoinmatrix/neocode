@@ -40,8 +40,15 @@ class DataTrain:
             idx,mouse,goal,label=ds.readTestFile()
             if idx==False:
                 break
-            item=f(idx,mouse,goal,label)
+            try:
+                item=f(idx,mouse,goal,label)
+            except Exception as e:
+                print e
+                exit()
+
             r=self.getResult(item)
+            # print item,r
+            # break
             allnum+=1
             if allnum%1000==0:
                 print idx,machine
