@@ -222,13 +222,96 @@ def notgetanalyst():
         # dw.draw3dgoal([goal[0],goal[1]+2000,0],c=colors[count%10])
     plt.show()
 
+def analystTestData():
+    ds=dataset.DataSet()
+    ds.getTrainData()
+    dt=datadeal.DataTrain()
+    idxs=[]
+    mouses=[]
+    goals=[]
+
+    for i in range(1000):
+        idx,mouse,goal,_=ds.readTestFile()
+        if mouse[1][0]<0:
+            mouse[1][0]=2100
+        if mouse[0][0]>1000:
+            mouse[0][0]-=400
+
+        mouses.append([mouse[0][0],mouse[1][0]])
+        goals.append(goal)
+
+    with open('./data/BDC1236_20170607.txt','r') as f:
+        while True:
+            idx=f.readline()
+            idx=int(idx)
+            if idx>1000:
+                break
+            idxs.append(idx)
+    idxs=np.array(idxs)
+    idxs=idxs-1
+    # print sum(idxs)
+    mouses=np.array(mouses)
+    dw=datadraw.DataDraw('2d')
+    dw.drawbatchgoal(mouses,c='b')
+    dw.drawbatchgoal(mouses[idxs],c='r')
+    plt.show()
+
+
+    # dt.testResultAll(ds,getvector,savepath='./data/assemble.txt')
+
+def analystTestData2():
+    ds=dataset.DataSet()
+    ds.getTrainData()
+    dt=datadeal.DataTrain()
+    idxs=[]
+    mouses=[]
+    goals=[]
+
+    for i in range(1000):
+        idx,mouse,goal,_=ds.readTestFile()
+        mouses.append(mouse)
+        goals.append(goal)
+    # print goals
+    with open('./data/BDC1236_20170607.txt','r') as f:
+        while True:
+            idx=f.readline()
+            idx=int(idx)
+            if idx>1000:
+                break
+            idxs.append(idx)
+    idxs=np.array(idxs)
+    print idxs
+    # print mouses[0]
+    dw=datadraw.DataDraw('3d')
+    colors=dw.getColorsValue()
+    start=10
+    # for i in range(10):
+    #     dw.draw3dline(mouses[start+i],c=colors[i%10])
+    # plt.savefig('./a.png')
+
+    # plt.show()
+    # print idxs
+    # idxs=idxs-1
+    # print sum(idxs)
+    # mouses=np.array(mouses)
+    # 
+    # dw.drawline(mouses[0])
+    # # dw.drawbatchgoal(mouses,c='b')
+    # # dw.drawbatchgoal(mouses[idxs],c='r')
+    # plt.show()
+
+
+    # dt.testResultAll(ds,getvector,savepath='./data/assemble.txt')
+
 
 if __name__=="__main__":
     # assemble()
     # getAssembleResult()
-    # 84.74 16573  =>15205
-    print datadeal.calcScoreRerve(0.8474,16573.0)
+    # 84.74 16573  =>15205  1000 176
+    # print datadeal.calcScoreRerve(0.8474,16573.0)
     # dataanalyst()
     # wronganalyst()
     # notgetanalyst()
+    # analystTestData()
+    analystTestData2()
     pass
