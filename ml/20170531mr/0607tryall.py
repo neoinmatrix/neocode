@@ -225,7 +225,9 @@ def notgetanalyst():
 
 if __name__=="__main__":
     # assemble()
-    getAssembleResult()
+    # getAssembleResult()
+    # 84.74 16573  =>15205
+    print datadeal.calcScoreRerve(0.8474,16573.0)
     # dataanalyst()
     # wronganalyst()
     # notgetanalyst()
