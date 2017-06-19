@@ -175,8 +175,10 @@ def analystnoget():
 
 
 if __name__=="__main__":
+    # 84.82
+    print datadeal.calcScoreRerve(0.8482,17014.0)
     # analystnoget()
-    tmp=assemble()
+    # tmp=assemble()
     # tmp=np.loadtxt('./data/tmp0619.txt')
     # tmp=np.array(tmp,dtype='int')
     # print tmp
