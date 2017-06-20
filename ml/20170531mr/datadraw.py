@@ -275,6 +275,6 @@ def plot_confusion_matrix(cm, genre_list, name, title,max,save=False):
 
 
 if __name__=="__main__":
-   # draw3d()
+   draw3d()
    # draw2d()
-   drawScatter()
+   # drawScatter()
