@@ -125,9 +125,10 @@ def assemble():
 
 
 if __name__=="__main__":
-
+    # 85.67 16059 15108
+    print datadeal.calcScoreRerve(0.8567,16059.0)
     # analystnoget()
-    tmp=assemble()
+    # tmp=assemble()
     # tmp=np.loadtxt('./data/tmp0619.txt')
     # tmp=np.array(tmp,dtype='int')
   
