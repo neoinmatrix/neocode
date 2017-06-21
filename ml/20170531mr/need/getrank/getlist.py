@@ -43,7 +43,7 @@ if __name__=='__main__':
         name=v[2]
         # print name
         if name==u"[u\'温州大学\']":
-            print v[0],v[1],v[3]
+            print v[0],v[1],v[3],v[4]
         # print name[3]
         # print name.decode('utf-8')
         # college.setdefault(name,0)
