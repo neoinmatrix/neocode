@@ -116,19 +116,19 @@ def assemble():
     vector=np.array(vector)
 
     dt=datadeal.DataTrain()
-    # clf = MLPClassifier(alpha=1e-2, hidden_layer_sizes=(20,10), random_state=1)
-    clf = SVC(C=1.35,kernel='poly',degree=4,gamma=1,coef0=1.6)
+    clf = MLPClassifier(alpha=1e-4,activation='tanh', hidden_layer_sizes=(20,10), random_state=1)
+    # clf = SVC(C=1.35,kernel='poly',degree=4,gamma=1,coef0=1.6)
     # dt.trainTest(clf,vector,labels)
 
     dt.train(clf,vector,labels)
-    dt.testResultAll(ds,getvector,savepath='./data/0621tmp.txt')
+    dt.testResultAll(ds,getvector,savepath='./data/0623tmp.txt')
 
 
 if __name__=="__main__":
     # 85.67 16059 15108
-    print datadeal.calcScoreRerve(0.8567,16059.0)
+    # print datadeal.calcScoreRerve(0.8567,16059.0)
     # analystnoget()
-    # tmp=assemble()
+    tmp=assemble()
     # tmp=np.loadtxt('./data/tmp0619.txt')
     # tmp=np.array(tmp,dtype='int')
   
