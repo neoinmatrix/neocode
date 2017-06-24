@@ -95,14 +95,41 @@ def getvector(idx,mouse,goal,label):
         tmpy=float(goal[1])-float(y[len(y)-1])
         return [tmpx/300,tmpy/3000]
 
+    def getmid(mouse):
+        xn=len(mouse[0])
+        mid=xn/2
+        idxx=range(mid-2,mid+3)
+        for i in range(5):
+            if idxx[i]<0:
+                 idxx[i]=0
+            if idxx[i]>(xn-1):
+                idxx[i]=xn-1
+
+        # print idx
+        dt=mouse[2][idxx[-1]]-mouse[2][idxx[0]]
+        dx=mouse[0][idxx[-1]]-mouse[0][idxx[0]]
+        dy=mouse[1][idxx[-1]]-mouse[1][idxx[0]]
+        mt=mouse[2][-1]
+
+        dt=dt if dt>1e-5 else 1.0
+        mt=mt if mt>1e-5 else 1.0
+       
+        a=dx/dt
+        b=dy/dt
+        c=dt/mt
+        return [a,b,c]
+
+
     tmp=[]
     # mouse[1][0]/1700/3,
-    tmp.extend([mouse[0][0]/1000,mouse[2][0]/1000])
+    xlen=len(mouse[0])
+    tmp.extend([mouse[0][0],mouse[2][0]/1000,mouse[2][xlen-1]/10000])
 
     tmp.extend(getyn(mouse))
-    # tmp.extend(getlastt(mouse))
+    tmp.extend(getlastt(mouse))
     tmp.extend(getlastangle(mouse))
     tmp.extend(getlastgoal(mouse,goal))
+    tmp.extend(getmid(mouse))
 
 
     return np.array(tmp).reshape([1,len(tmp)])
@@ -120,11 +147,14 @@ def assemble():
     # print mouses[492],goals[492]
     for i in range(n):
         vector.append(getvector(1,mouses[i],goals[i],1)[0])
+        # break
+    # exit()
     vector=np.array(vector)
 
     dt=datadeal.DataTrain()
-    clf = MLPClassifier(alpha=1e-6,activation='logistic', hidden_layer_sizes=(20,20),\
-     random_state=0,solver='lbfgs')
+    clf = MLPClassifier(alpha=1e-6,activation='logistic', \
+        hidden_layer_sizes=(20,20),random_state=0,solver='lbfgs',\
+        max_iter=1000)
     # clf = SVC(C=1.35,kernel='poly',degree=4,gamma=1,coef0=1.6)
     
     print vector[0]
@@ -133,10 +163,15 @@ def assemble():
     print vector[2700]
     print vector[2800]
     print vector[2900]
-    # exit()
+    exit()
     # test=False
-    test=False
-    if test==True:
+    # with open('./data/93.txt','r') as f:
+    #     idxstr=f.read()
+    # rightidx=idxstr.split('\n')
+    # print rightidx
+
+    test=True
+    if test==False:
         dt.trainTest(clf,vector,labels)
     else:
         dt.train(clf,vector,labels)
@@ -144,11 +179,38 @@ def assemble():
 
 
 if __name__=="__main__":
-    # 85.67 16059 15108
-    # print datadeal.calcScoreRerve(0.9306,22400.0)
+    # 85.67 16059 15108 19254
+    print datadeal.calcScoreRerve(0.9331,21058.0)
+    exit()
     # analystnoget()
     tmp=assemble()
     # tmp=np.loadtxt('./data/tmp0619.txt')
     # tmp=np.array(tmp,dtype='int')
-  
+    
+    # xarr=[0]*100001
+    # with open('./data/93.txt','r') as f:
+    #     idxstr=f.read()
+    # rightidx=idxstr.split('\n')
+    # with open('./data/0624tmp.txt','r') as f:
+    #     idxstr=f.read()
+    # newrightidx=idxstr.split('\n')
+    # # common=[]
+    # for idx in rightidx:
+    #     if idx=='':
+    #         continue
+    #     x=int(idx)
+    #     # print x
+    #     xarr[x]+=1
+    # for idx in newrightidx:
+    #     if idx=='':
+    #         continue
+    #     x=int(idx)
+    #     xarr[x]+=1
+    # tmp=np.array(xarr)
+    # count=0
+    # for i in tmp:
+    #     if i>1:
+    #         count+=1
+    # print count
+
     pass
