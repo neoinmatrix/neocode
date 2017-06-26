@@ -37,6 +37,7 @@ class DataDeal:
             conf_tmp=metrics.confusion_matrix(y_expected, predicted)
             confusion+=conf_tmp
             accy_tmp=metrics.accuracy_score(y_expected, predicted)
+            # print metrics.classification_report(y_expected, predicted)
             accuracy+=accy_tmp
             if isprint:
                 print accy_tmp

@@ -10,6 +10,8 @@ dd=DataDeal()
 pima=dd.getPima()
 iris=dd.getIris()
 
+# def getPR(data):
+    
 def common(clf,clf_name=''):
     print "========",clf_name,"========"
     # pima
@@ -27,23 +29,23 @@ def knn():
     common(clf,"knn")
 # naive_bayes ===================================
 def bayes():
-    from sklearn.naive_bayes import MultinomialNB 
-    clf = MultinomialNB()
+    from sklearn.naive_bayes import GaussianNB 
+    clf = GaussianNB()
     common(clf,"knn")
 # DecisionTree ===================================
 def dtree():
     from sklearn import tree
-    clf = tree.DecisionTreeClassifier(max_depth=7)
+    clf = tree.DecisionTreeClassifier(max_depth=5)
     common(clf,"DecisionTree")
 # RandomForest ===================================
 def randforest():
     from sklearn.ensemble import RandomForestClassifier
-    clf = RandomForestClassifier(max_depth=7, n_estimators=10)
+    clf = RandomForestClassifier(max_depth=4, n_estimators=20)
     common(clf,"RandomForest")
 # ann ===================================
 def ann():
     from sklearn.neural_network import MLPClassifier
-    clf = MLPClassifier(alpha=1e-5, hidden_layer_sizes=(50,), random_state=1)
+    clf = MLPClassifier(alpha=1e-3, hidden_layer_sizes=(10,),max_iter=500, random_state=0)
     common(clf,"neural_network")
 # svm ===================================
 def svm():
@@ -65,4 +67,10 @@ def adaboost():
     common(clf,"ada boost base on svm")
 
 if __name__=="__main__":
+    # knn()
+    # bayes()
+    # dtree()
+    # randforest()
+    # ann()
+    # svm()
     adaboost()
