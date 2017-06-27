@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn import  metrics
-
 class DataDeal:
     def getPima(self):
         train=pd.read_csv("./data/pima.csv",header=None)
@@ -25,8 +24,10 @@ class DataDeal:
         return data,target,nums,types
     def test(self,clf,data,target,nums,types,isprint=False):
         kf = KFold(n_splits=10, shuffle=True,random_state=np.random.randint(11))
-        accuracy=0.0
-        confusion=np.zeros([types,types])
+        aprfc={'acc':0.0,'p':0.0,'r':0.0,'f1':0.0,'confusion':np.zeros([types,types])}
+        aprfc_f={'acc':metrics.accuracy_score,\
+        'p':metrics.precision_score,'r':metrics.recall_score,\
+        'f1':metrics.f1_score,'confusion':metrics.confusion_matrix}
         for train_index, test_index in kf.split(range(nums)):
             X=data[train_index]
             y=target[train_index]
@@ -34,28 +35,41 @@ class DataDeal:
             X_test=data[test_index]
             y_expected = target[test_index]
             predicted = clf.predict(X_test)
-            conf_tmp=metrics.confusion_matrix(y_expected, predicted)
-            confusion+=conf_tmp
-            accy_tmp=metrics.accuracy_score(y_expected, predicted)
-            # print metrics.classification_report(y_expected, predicted)
-            accuracy+=accy_tmp
+            for p in aprfc:
+                if p in ['f1','p','r']:
+                    aprfc[p]+=aprfc_f[p](y_expected, predicted, average='macro')
+                elif p=='confusion':
+                    aprfc[p]+=aprfc_f[p](y_expected, predicted, labels=range(types))
+                else:
+                    aprfc[p]+=aprfc_f[p](y_expected, predicted)
             if isprint:
-                print accy_tmp
-        # p,r,t = metrics.precision_recall_curve(y_expected, predicted)
-        return [confusion,accuracy/10.0]  
-    def saveResult(self,data):
-        pass
-        pass
-    def calcPRCurve(self,data):
-        pass
-        pass
+                print aprfc
+        return aprfc
+    def plot_correlation(self,cm, genre_list, name, title):
+        from matplotlib import pylab 
+        pylab.clf()
+        pylab.matshow(cm, fignum=False, cmap='Greens', vmin=0, vmax=1.0)
+        ax = pylab.axes()
+        ax.set_xticks(np.arange(0,len(genre_list),1))
+        ax.set_xticklabels(genre_list)
+        ax.xaxis.set_ticks_position("bottom")
+        ax.set_yticks(np.arange(0,len(genre_list),1))
+        ax.set_yticklabels(genre_list)
+        pylab.title(title)
+        pylab.colorbar()
+        # pylab.grid(True)
+        pylab.show()
+        pylab.xlabel('x class')
+        pylab.ylabel('y class')
+        pylab.grid(True)
 if __name__=="__main__": 
     dd=DataDeal()
-    # iris=dd.getIris()
-    # data,target,nums,types=iris
     pima=dd.getPima()
     data,target,nums,types=pima
     from sklearn.neighbors import KNeighborsClassifier
     clf = KNeighborsClassifier(n_neighbors=3)
     result=dd.test(clf,data,target,nums,types)
-    print "=========pima", result[1]
+    print "=========pima\n", result
+    # iris=dd.getIris()
+    # data,target,nums,types=iris
+    # p,r,t = metrics.precision_recall_curve(y_expected, predicted)

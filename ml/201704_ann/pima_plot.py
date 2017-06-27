@@ -28,5 +28,5 @@ for i in range(9):
         ref_matrix[i][j]=train[i].corr(train[j])
 # print ref_matrix
 from utils import *
-plot_confusion_matrix(ref_matrix,[i for i in range(10)],'Correlation','Correlation')
+plot_confusion_matrix2(ref_matrix,[i for i in range(9)],'Correlation (reflect rate between two features)','Correlation (reflect rate between two features)')
 
