@@ -138,7 +138,7 @@ def getspeed(mouse):
     return [vx.max(),vx.min(),vx.mean(),vy.max(),vy.min(),vy.mean()]
     
 
-def getmid(mouse):
+def getmidx(mouse):
     xn=len(mouse[0])
     mid=xn/2
     idxx=range(mid-2,mid+3)
@@ -166,13 +166,112 @@ def getmid(mouse):
     c= c if c<1 else 0
     return [a,c]
 
+def getlastx(mouse):
+    xn=len(mouse[0])
+    mid=xn/2
+    idxx=range(0,5)
+    for i in range(5):
+        if idxx[i]<0:
+             idxx[i]=0
+        if idxx[i]>(xn-1):
+            idxx[i]=xn-1
+
+    # print idx
+    dt=mouse[2][idxx[-1]]-mouse[2][idxx[0]]
+    dx=mouse[0][idxx[-1]]-mouse[0][idxx[0]]
+    dy=mouse[1][idxx[-1]]-mouse[1][idxx[0]]
+    mt=mouse[2][-1]
+
+    dt=dt if dt>1e-5 else 4200.0
+    mt=mt if mt>1e-5 else 700.0
+   
+
+    a=dx/dt
+    b=dy/dt
+    c=dt/mt
+    a= a if abs(a)<1 else 0
+    b= b if abs(b)<1 else 0
+    c= c if c<1 else 0
+    return [a,b,c]
+
+def getrightup(mouse):
+    n=len(mouse[0])
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+
+    twz=np.zeros([3,3],dtype='float')
+    for i in range(1,n-1):
+        if x[i]-x[i-1]==0:
+            if  y[i]-y[i-1]==0:
+                twz[0,0]+=1
+            elif y[i]-y[i-1]>0:
+                twz[0,1]+=1
+            else:
+                twz[0,2]+=1
+        elif x[i]-x[i-1]>0:
+            if  y[i]-y[i-1]==0:
+                twz[1,0]+=1
+            elif y[i]-y[i-1]>0:
+                twz[1,1]+=1
+            else:
+                twz[1,2]+=1
+        else:
+            if  y[i]-y[i-1]==0:
+                twz[2,0]+=1
+            elif y[i]-y[i-1]>0:
+                twz[2,1]+=1
+            else:
+                twz[2,2]+=1
+
+    # pass
+    twz=twz/float(n)
+    twz=twz**0.5
+    # print twz
+    # exit()
+    return twz.reshape([1,9])
+
+
+def getplr(mouse):
+    n=len(mouse[0])
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+
+    twz=np.zeros([2,3],dtype='float')
+    for i in range(1,n-1):
+        if x[i]-x[i-1]==0:
+            twz[0,0]+=1
+        elif x[i]-x[i-1]>0:
+            twz[0,1]+=1
+        else:
+            twz[0,2]+=1
+
+        if  y[i]-y[i-1]==0:
+            twz[1,0]+=1
+        elif y[i]-y[i-1]>0:
+            twz[1,1]+=1
+        else:
+            twz[1,2]+=1
+
+    # pass
+    twz=twz/float(n)
+    twz=twz**0.5
+    # print twz
+    # exit()
+    return twz.reshape([1,6])
+
+
 def getfeature(idx,mouse,goal,label):
     tmp=[]
-    # tmp.append(mouse[2][0])
+    t=mouse[2][0]
+    t = t if t <800 else 800.0                #  1. start t
+    t=t/800.0
+    tmp.append(t)
     xlen=len(mouse[0])
     size=float(xlen)/300.0
     size=size**0.5
-    tmp.append(size) # size of mouse
+    tmp.append(size) # size of mouse          # 2. size of mouse
 
     startx=float(mouse[0][0])
     startx=170 if startx<170 else startx
@@ -180,28 +279,27 @@ def getfeature(idx,mouse,goal,label):
     startx=(startx-170)/1670
     startx=startx**0.2
     startx=0 if startx<1e-3 else startx
-    tmp.append(startx) # start x
+    tmp.append(startx) # start x             # 3. start x
 
     starty=float(mouse[1][0])
     starty=1898 if starty<1898 else starty
     starty=3035 if starty>3035 else starty
     starty=(starty-1898)/1137
     starty=0 if starty<1e-3 else starty
-    tmp.append(starty) # start x
+    tmp.append(starty) # start x              # 4.start y
 
-    # startt=float(mouse[2])
-    tstd=mouse[2].std()
+    tstd=mouse[2].std()                        # 5. t std
     tstd=0 if tstd<0 else tstd
     tstd=17132 if tstd>17132 else tstd
     tstd=tstd/17132.0
     tstd=tstd**0.3
-    tstd=0 if tstd<1e-5 else tstd
+    tstd=0 if tstd<1e-3 else tstd
     tmp.append(tstd) # start x
 
     tuse=mouse[2][-1]
     tuse=tuse/37132.0
     tuse=tstd**0.3
-    tuse=0 if tuse<1e-5 else tuse
+    tuse=0 if tuse<1e-5 else tuse             # 6. last t      
     tmp.append(tuse) # start x
 
     ex=mouse[0][-1]
@@ -211,14 +309,38 @@ def getfeature(idx,mouse,goal,label):
     gy=goal[1]
 
     dx=(ex-gx)/1840
-    dy=(ey-gy)/3035
+    dy=(ey-gy)/3035                      # 7.8 9  last mouse with goal positions
     tmp.append(dx)
-    tmp.append(dy)
+    tmp.append(dy)    
+    dis=dx**2+dy**2
+    dis=dis**0.5                          
+    tmp.append(dis)                              
 
-    x,t=getmid(mouse) # mid five points
+    x,t=getmidx(mouse)                   # 10,11 mid five points x,y speed 
     tmp.append(x)
-    tmp.append(t)   
+    # tmp.append(y)
+    tmp.append(t)  
 
+    twz=getrightup(mouse)                   # 12,13 mid five points x,y speed 
+    # print twz[0].tolist()
+    # exit()
+    # tmp.append(twz[0].tolist())
+    tmp.extend(twz[0].tolist())    
+
+    twz=getplr(mouse)     
+    tmp.extend(twz[0].tolist())
+ 
+
+    # yu,yd,yuu,ydd=getrightup(mouse)                   # 12,13 mid five points x,y speed 
+    # tmp.append(yu)
+    # tmp.append(yd)
+    # tmp.append(yuu)
+    # tmp.append(ydd)
+    # tmp.append(t)  
+    # print tmp 
+    tmp[2]=tmp[2]*10
+    # print tmp 
+    # exit()
 
     return np.array(tmp).reshape([1,len(tmp)])
 
@@ -233,27 +355,56 @@ def assemble():
     for i in range(n):
         vector.append(getfeature(1,mouses[i],goals[i],1)[0])
     vector=np.array(vector)
+    np.set_printoptions(formatter={'float':lambda x: "%5.2f"%float(x)})
     # print vector[0:10]
+    # print vector[:,0].min()
+    # print vector[:,0].max()
+    # print vector[:,0].mean()
+    # print vector[:,0].std()
+    # exit()
+    print vector[1000:1010]
+    print "=============="
     # print vector[2700:2710]
+    print vector[2800:2810]
+    # exit()
+    # for i in range(3):
+    #     a=vector[0:2600,i].mean()
+    #     b=vector[2600:3000,i].mean()
+
+    #     ar=vector[0:2600:,i].std()
+    #     br=vector[2600:3000:,i].std()
+    #     print a-ar," ",a+ar
+    #     print b-br," ",b+br
+
+    #     # print vector[0:2600,i].mean()
+    #     # print vector[2600:3000,i].mean()
+    #     # print vector[0:2600:,i].std()
+    #     # print vector[2600:3000:,i].std()
+    #     print i,"============"
     # exit()
  
     dt=datadeal.DataTrain()
-    clf = MLPClassifier(alpha=1e-4,activation='logistic', \
-        hidden_layer_sizes=(16,16),random_state=0,solver='lbfgs',\
+    clf = MLPClassifier(alpha=1e-4,
+        activation='logistic', \
+        # activation='logistic', \
+        hidden_layer_sizes=(24,24),random_state=0,solver='lbfgs',\
         max_iter=600)
-    # clf = SVC(C=1.35,kernel='poly',degree=4,gamma=1,coef0=1.6)
+    # lbfgs ,kernel='poly',degree=4,gamma=1,coef0=1.6
+    # clf = SVC(C=20.35)
     
     # False
-    test=False
+    test=True
     if test==True:
-        dt.trainTest(clf,vector,labels)
+        dt.trainTest(clf,vector,labels,10.0)
     else:
         dt.train(clf,vector,labels)
-        dt.testResultAll(ds,getfeature,savepath='./data/0629tmp.txt')
+        dt.testResultAll(ds,getfeature,savepath='./data/0629tmp.txt',stop=12000)
 
 
 if __name__=="__main__":
     # print datadeal.calcScoreRerve(0.9472,19746.0)
+    # print "sdfsdf"
+    # exit(0)
     tmp=assemble()
     # test()
     pass
