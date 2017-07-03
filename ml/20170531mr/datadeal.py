@@ -44,8 +44,12 @@ class DataTrain:
             idx,mouse,goal,label=ds.readTestFile()
             if idx==False:
                 break
+                
             try:
-                item=f(idx,mouse,goal,label,True,scal)
+                tmp=f(idx,mouse,goal,label)
+                item=scal.transform([tmp[0].tolist()])
+                item=item[0].tolist()
+
             except Exception as e:
                 print e
                 exit()
