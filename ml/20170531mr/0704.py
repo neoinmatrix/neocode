@@ -190,19 +190,23 @@ def main():
 
     scaler_vector=vector
     vector = preprocessing.scale(vector)
-    vector = np.c_[vector[:,1:],scaler_vector[:,1]]
+    vector = np.c_[scaler_vector[:,0],vector[:,1:]]
+    # printsomething(vector)
 
-    # print vector[0]
-    pca = PCA(n_components=16)
+    pca = PCA(n_components=13)
     pca.fit(vector)
     vector=pca.transform(vector)
-  
+
     dt=datadeal.DataTrain()
-    # about 2w  
-    clf = MLPClassifier(alpha=1e-6,
+    # about 17 w
+    clf = MLPClassifier(alpha=0.9,
         activation='logistic', \
-        hidden_layer_sizes=(16,18),random_state=0,solver='lbfgs',\
-        max_iter=800)
+        hidden_layer_sizes=(39),random_state=0,solver='lbfgs',\
+        max_iter=250,early_stopping=True, epsilon=1e-04,\
+        # learning_rate_init=0.1,learning_rate='invscaling',
+    )
+
+    print clf
     # clf = MLPClassifier(alpha=1e-4,
     #     activation='logistic', \
     #     hidden_layer_sizes=(16,18),random_state=0,solver='lbfgs',\
@@ -211,11 +215,12 @@ def main():
     # False
     test=False
     if test==True:
-        dt.trainTest(clf,vector,labels,10.0)
+        dt.trainTest(clf,vector,labels,4.0)
     else:       
         scaler = preprocessing.StandardScaler().fit(scaler_vector)
         dt.train(clf,vector,labels)
         dt.testResultAll(ds,getfeature,savepath='./data/0704tmp.txt',stop=-1,scal=scaler,pca=pca)
+        # dt.testResultAll(ds,getfeature,savepath='./data/0704tmp.txt',stop=1200,scal=scaler)
 
        
 if __name__=="__main__":
@@ -225,11 +230,11 @@ if __name__=="__main__":
     # print(cal(386,24))
     # print(cal(386,15))
     # print(cal(382,29))
-    # import time
-    # start =time.clock()
-    # main()
-    # end = time.clock()
-    # print('Running time: %s Seconds'%(end-start))
+    import time
+    start =time.clock()
+    main()
+    end = time.clock()
+    print('Running time: %s Seconds'%(end-start))
 
-    print datadeal.calcScoreRerve(0.9480,20045)
+    # print datadeal.calcScoreRerve(0.9480,20045)
     pass

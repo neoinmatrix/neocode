@@ -1,13 +1,13 @@
 # coding 
-with open('../data/good.txt','r') as f:
+with open('../data/94.txt','r') as f:
     idxstr=f.read()
 rightidx=idxstr.split('\n')
-# print rightidx
+print len(rightidx)
 
-with open('../data/0626tmp.txt','r') as f:
+with open('../data/0704tmp.txt','r') as f:
     idxstr=f.read()
 myidx=idxstr.split('\n')
-# print myidx
+print len(myidx)
 
 arr=[0]*100001
 for v in rightidx:
@@ -22,6 +22,6 @@ for v in myidx:
     arr[idx]+=1
 count=0
 for i in range(1,100001):
-    if arr[i]>1:
+    if arr[i]==2:
         count+=1
 print count

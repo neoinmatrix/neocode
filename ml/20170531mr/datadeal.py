@@ -36,7 +36,7 @@ class DataTrain:
     def getResult(self,X):
         return self.clf.predict(X)
 
-    def testResultAll(self,ds,f,savepath='./data/result.txt',stop=-1,scal=''):
+    def testResultAll(self,ds,f,savepath='./data/result.txt',stop=-1,scal='',pca=''):
         allnum=0
         machine=0
         machine_list=[]
@@ -47,9 +47,9 @@ class DataTrain:
                 
             try:
                 tmp=f(idx,mouse,goal,label)
-                item=scal.transform([tmp[0].tolist()])
-                item=item[0].tolist()
-
+                item=scal.transform(tmp)
+                item[0][0]=tmp[0][0]
+                item=pca.transform(item)
             except Exception as e:
                 print e
                 exit()
