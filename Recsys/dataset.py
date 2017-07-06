@@ -1,5 +1,6 @@
 # coding=utf-8
 import re
+import random
 import numpy as np
 
 class Wsdata:
@@ -73,10 +74,13 @@ class Wsdata:
         # mean=item.mean()
         # std=item.std()
         n=len(item)
-        print (0,n,int(n*percent))
-        a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-        # idxs=np.random.sample((a,5))
-        return idxs
+        idxs=random.sample(range(n), int(n*percent))
+        idxs=sorted(idxs)
+        idxs_test=[]
+        for i in range(n):
+            if i not in idxs:
+                idxs_test.append(i)
+        return idxs,idxs_test
 
     def getSample(self,type='rt',percent=0.1):
         if type=='rt':
@@ -86,21 +90,55 @@ class Wsdata:
             self.getTpMatrix()
             data=self.tp_matrix
         n,m=data.shape
-        sample_data=[]
-        sample_idxs=[]
+        # sample_data=[]
+        # sample_idxs=[]  
+        # sample_data=[]
+        # sample_idxs=[]
         str_data=''
+        str_data_test=''
         for i in range(n):
-            s_idxs=self.sampling(data[i],percent=0.1)
-            sample_idxs.append(s_idxs)
-            sample_data.append(data[i,s_idxs])
+            s_idxs,s_idxs_test=self.sampling(data[i],percent=0.1)
+            # sample_idxs.append(s_idxs)
+            # sample_data.append(data[i,s_idxs])
+
+            # sample_idxs.append(s_idxs)
+            # sample_data.append(data[i,s_idxs])
             for j in s_idxs:
-                str_data+="%d\t%d\t%f\n"%(i,j,data[i,j])
+                str_data+="%d\t%d\t%f\n"%(i,j,data[i,j])    
+            for j in s_idxs_test:
+                str_data_test+="%d\t%d\t%f\n"%(i,j,data[i,j])
         path=self.path+'sample/sample_%s_%2.1f.txt'%(type,percent)
         with open(path,'w') as f:
-            f.write(str_data)
+            f.write(str_data) 
+        path=self.path+'sample/test_%s_%2.1f.txt'%(type,percent)
+        with open(path,'w') as f:
+            f.write(str_data_test)
         print path+" written is ok "
         # sample_idxs=np.array(sample_idxs)
         # print sample_idxs.shape
+
+    def getRtData(self,file=''):
+        if file=='':
+            file='sample/sample_rt_0.1.txt'
+        path=self.path+file
+        with open(path,'r') as f:
+            content=f.read()
+        items_arr=content.split('\n')
+        items=[]
+        n_client=0
+        n_service=0
+        for v in items_arr:
+            if v=='':
+                continue
+            tmp_arr=v.split('\t')
+            items.append((int(tmp_arr[0]),int(tmp_arr[1]),float(tmp_arr[2])))
+            if int(tmp_arr[0])>n_client:
+                n_client=int(tmp_arr[0])
+            if int(tmp_arr[1])>n_service:
+                n_service=int(tmp_arr[1])
+        # print n_client,n_service
+        print items[0]
+
 
 if __name__=="__main__":
     import dataset
@@ -110,11 +148,9 @@ if __name__=="__main__":
     # wsdata.getUserList()
     # wsdata.getWsList()
     # print "data is ready!"
-    # wsdata.getSample('rt')
+    wsdata.getSample('rt')
+    
     # wsdata.getSample('tp')
-    # print 339* 582
-    # print 339*5825
-
-    a=np.ones([100])
-    # print a
-    print wsdata.sampling(a)
+    # wsdata.getRtData()
+    # a=np.ones(100)
+    # wsdata.sampling(a,0.1)
