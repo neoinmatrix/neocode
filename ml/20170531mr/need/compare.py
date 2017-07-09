@@ -4,7 +4,7 @@ with open('../data/94.txt','r') as f:
 rightidx=idxstr.split('\n')
 print len(rightidx)
 
-with open('../data/0704tmp.txt','r') as f:
+with open('../data/0709_2f.txt','r') as f:
     idxstr=f.read()
 myidx=idxstr.split('\n')
 print len(myidx)
@@ -21,7 +21,12 @@ for v in myidx:
     idx=int(v)
     arr[idx]+=1
 count=0
+
+str_result=''
 for i in range(1,100001):
     if arr[i]==2:
         count+=1
-print count
+        str_result+=str(i)+"\n"
+# print count
+with open('../data/0709_2f_filter.txt','w') as f:
+    f.write(str_result)

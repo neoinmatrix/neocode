@@ -76,6 +76,9 @@ class DataTrain:
             f.write(result)
         print "ok"
 
+def calFAR(a,b):
+        return float(a)/float(a+b)
+
 def calcScore(rm,jm,rms=20000.0):
     P=rm/jm
     R=rm/rms

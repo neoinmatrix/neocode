@@ -31,7 +31,7 @@ def getdata(page=1):
 if __name__=='__main__':
     data=getdata(1)
     # print data
-    for i in range(2,9):
+    for i in range(2,6):
         tmp=getdata(i)
         data = np.vstack((data, tmp))
     # print data
