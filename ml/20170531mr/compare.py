@@ -1,10 +1,11 @@
 # coding 
-with open('../data/BDC1236_20170711_p.txt','r') as f: # 95.70 19083
+path='./data/'
+with open(path+'BDC1236_20170711_p.txt','r') as f: # 95.70 19083
     idxstr=f.read()
 rightidx=idxstr.split('\n')
 print len(rightidx)
 
-with open('../data/BDC1236_20170711_p.txt','r') as f:
+with open(path+'0711tmp.txt','r') as f:
     idxstr=f.read()
 myidx=idxstr.split('\n')
 print len(myidx)
@@ -30,3 +31,9 @@ for i in range(1,100001):
 print count
 # with open('../data/0709_2f_filter.txt','w') as f:
 #     f.write(str_result)
+
+# import datadeal
+# print "====="
+# print datadeal.calcScoreRerve(0.9570,19901)
+# # print datadeal.calcScoreRerve(0.9570,19902)
+# # print datadeal.calcScoreRerve(0.9973,20000)

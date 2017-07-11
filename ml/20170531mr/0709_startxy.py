@@ -42,20 +42,20 @@ def main_start():
     # plt.scatter([1,2],[2,3],c='y')
     # print mouses_start[:10]
     # exit()
-    path="./data/start_pic/"
-    for i in range(2650,3001,50):
-        dw.drawbatchgoal(mouses_start[:2600],'y')
-        dw.drawbatchgoal(mouses_start[i-50:i],'r')
-        plt.title("%d.png"%i)
-        plt.savefig(path+"%d.png"%i)
-        plt.clf()
-        plt.close()
-        print i
-    # dw.drawbatchgoal(mouses_start[2650:2850],'g')
-    # dw.drawbatchgoal(mouses_start[2850:2950],'g')
-    # dw.drawbatchgoal(mouses_start[2850:3000],'b')
-    # dw.drawbatchgoal(mouses_start[2600:],'g')
-    # dw.drawbatchgoal(mouses_start[2600:],'b')
+    # path="./data/start_pic/"
+    # for i in range(2650,3001,50):
+    #     dw.drawbatchgoal(mouses_start[:2600],'y')
+    #     dw.drawbatchgoal(mouses_start[i-50:i],'r')
+    #     plt.title("%d.png"%i)
+    #     plt.savefig(path+"%d.png"%i)
+    #     plt.clf()
+    #     plt.close()
+    #     print i
+    dw.drawbatchgoal(mouses_start[2650:2850],'g')
+    dw.drawbatchgoal(mouses_start[2850:2950],'r')
+    dw.drawbatchgoal(mouses_start[2850:3000],'b')
+    dw.drawbatchgoal(mouses_start[2600:],'y')
+    dw.drawbatchgoal(mouses_start[2600:],'p')
     # ==    ==
     # dw.drawbatchgoal(goals[:2600],'y')
     # dw.drawbatchgoal(goals[2600:],'b')
@@ -136,16 +136,26 @@ def main():
     goals=ds.train["goals"]
     labels=ds.train["labels"]
     n=ds.train["size"]
-    dw=datadraw.DataDraw("3d")
+    dw=datadraw.DataDraw("2d")
     mouses_start=get_start(mouses)
     # print mouses_start.shape
     # dw.draw3dgoal
 
     # drawbatch(mouses_start[0:2600].T,dw,'y')
 
-    drawbatch(mouses_start[2650:2800].T,dw,'g')
-    drawbatch(mouses_start[2800:2900].T,dw,'r')
-    drawbatch(mouses_start[2900:3000].T,dw,'b')
+    # drawbatch(mouses_start[2650:2800].T,dw,'g')
+    # drawbatch(mouses_start[2800:2900].T,dw,'r')
+    # drawbatch(mouses_start[2900:3000].T,dw,'b')
+
+    # print mouses_start[0]
+    # exit()        
+  
+    dw.drawbatchgoal(mouses_start[2650:2700],'g')
+    # dw.drawbatchgoal(mouses_start[2700:2800],'b')
+    dw.drawbatchgoal(mouses_start[2800:2900],'y')
+    dw.drawbatchgoal(mouses_start[2900:3000],'r')
+
+    dw.drawbatchgoal(mouses_start[2600:2650],'y')
 
     # dw.draw3dgoal(mouses_start[0:2600],c='y')
     # dw.draw3dgoal(mouses_start[2650:2850],c='g')
