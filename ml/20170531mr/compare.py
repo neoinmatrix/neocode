@@ -1,11 +1,12 @@
 # coding 
 path='./data/'
 with open(path+'BDC1236_20170711_p.txt','r') as f: # 95.70 19083
+# with open(path+'0712tmp.txt','r') as f: # 95.70 19083
     idxstr=f.read()
 rightidx=idxstr.split('\n')
 print len(rightidx)
 
-with open(path+'0711tmp.txt','r') as f:
+with open(path+'0712tmp.txt','r') as f:
     idxstr=f.read()
 myidx=idxstr.split('\n')
 print len(myidx)
@@ -26,6 +27,7 @@ count=0
 str_result=''
 for i in range(1,100001):
     if arr[i]==2:
+        # print i
         count+=1
         str_result+=str(i)+"\n"
 print count
