@@ -14,10 +14,10 @@ class DataTrain:
         clf.fit(X,y)
         self.clf=clf
 
-    def trainTest(self,clf,X,y,fold=10.0):
+    def trainTest(self,clf,X,y,fold=10.0,classn=2,returnconfusion=False):
         kf = KFold(n_splits=int(fold), shuffle=True,random_state=np.random.randint(len(y)))
         accuracy=0.0
-        confusion=np.zeros([2,2])
+        confusion=np.zeros([classn,classn])
         for train_index, test_index in kf.split(range(len(y))):
             X_train=X[train_index]
             y_train=y[train_index]
@@ -32,6 +32,8 @@ class DataTrain:
             print "predited rate:%f"%accy_tmp
         print confusion
         print accuracy/fold
+        if returnconfusion:
+            return confusion
 
     def getResult(self,X):
         return self.clf.predict(X)

@@ -291,10 +291,10 @@ def get_derivative(mouse):
         vvy=ddy/dt
         axs.append(vvx)
         ays.append(vvy)
-    # idxx=range(xn-5,xn)
+    idxx=range(xn-5,xn)
     # idxx=range(0,5)
-    xnt=int((xn-1)/2)
-    idxx=[i for i in range(xnt-2,xnt+3)]
+    # xnt=int((xn-1)/2)
+    # idxx=[i for i in range(xnt-2,xnt+3)]
     # print idxx
     # print xn
     lax=getfivex(axs,idxx)
