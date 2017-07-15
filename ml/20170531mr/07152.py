@@ -60,84 +60,152 @@ def get_sharp_angle(mouse):
     # tmp.extend(getMMMS(angle_arr))
     # tmp.extend(getMMMS(r_arr))
 
-def get_distribution_angle(mouse):
+def get_distribution_2dangle(mouse):
     x=mouse[0]
     y=mouse[1]
     t=mouse[2]
     x=x/x.max()
     y=y/y.max()
+    t=t/t.max()
     xn=len(mouse[0])
     one_arr=[]
     rt_arr=[]
 
     r_arr=[]
     angle_arr=np.zeros(5,dtype=np.float)
+    angle_arr3d=np.zeros(5,dtype=np.float)
     angle_xrr=np.zeros(5,dtype=np.float)
     angle_yrr=np.zeros(5,dtype=np.float)
     # aspeed_arr=[0.0]
     arr=[]
+    arr3d=[]
     for i in range(1,xn):
         if i+1>=xn:
             break
         else:
             vx1=x[i+1]-x[i]
             vy1=y[i+1]-y[i]
+            vt1=t[i+1]-t[i]
             vx2=x[i]-x[i-1]
             vy2=y[i]-y[i-1]
+            vt2=t[i]-t[i-1]
             dt=t[i+1]-t[i-1]
             angle=(vx1*vx2+vy1*vy2)
+            angle3d=(angle+vt1*vt2)
             if dt==0:
                 continue
             r1=(vx1**2+vy1**2)**0.5
             r2=(vx2**2+vy2**2)**0.5
-            if r1==0 or r2==0:
+            r13d=(vx1**2+vy1**2+vt1**2)**0.5
+            r23d=(vx2**2+vy2**2+vt2**2)**0.5
+
+            if r1==0 or r2==0 or r13d==0 or r23d==0:
                 continue
             angle/=r1
             angle/=r2
+            angle3d/=r13d
+            angle3d/=r23d
             arr.append(angle)
+            arr3d.append(angle3d)
             if angle>-1.1 and angle<=-0.6:
                 angle_arr[0]+=1
+                angle_arr3d[0]+=1
                 angle_xrr[0]+=vx1
                 angle_yrr[0]+=vy1
             elif angle>-0.6 and angle<=-0.3:
                 angle_arr[1]+=1
+                angle_arr3d[1]+=1
                 angle_xrr[1]+=vx1
                 angle_yrr[1]+=vy1
             elif angle>-0.3 and angle<=0.3:
                 angle_arr[2]+=1
+                angle_arr3d[2]+=1
                 angle_xrr[2]+=vx1
                 angle_yrr[2]+=vy1
             elif angle>0.3 and angle<1:
                 angle_arr[3]+=1
+                angle_arr3d[3]+=1
                 angle_xrr[3]+=vx1
                 angle_yrr[3]+=vy1
             elif angle>=1.0:
                 angle_arr[4]+=1
+                angle_arr3d[4]+=1
                 angle_xrr[4]+=vx1
                 angle_yrr[4]+=vy1
+    
     n=float(sum(angle_arr))
     # angle_arr=angle_arr/float(n)
-    angle_arr=angle_arr.tolist()
+    tmp=[]
+    # tmp.extend(angle_arr.tolist())
+    tmp.extend(angle_arr3d.tolist())
     # angle_arr.extend(angle_xrr)
     # angle_arr.extend(angle_yrr)
-    angle_arr.append(n)
-    return angle_arr
+    # angle_arr=angle_arr3d.tolist()
+    tmp.append(n)
+    lastfive=getfivex(arr3d,range(len(arr3d)-5,len(arr3d)))
+
+    tmp.extend(lastfive)
+    # tmp.append(x[0])
+    # tmp.append(y[0])
+    # tmp.append(t[0])
+    return tmp
     # return arr
  
-def getfeaturetest(idx,mouse,goal,label,use_all=False):
+def get_distribution_3dangle(mouse):
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+    x=x/x.max()
+    y=y/y.max()
+    t=t/t.max()
+    xn=len(mouse[0])
+
+    angle_arr3d=np.zeros(5,dtype=np.float)
+    arr3d=[0.0]
+    for i in range(1,xn):
+        if i+1>=xn:
+            break
+        else:
+            vx1=x[i+1]-x[i]
+            vy1=y[i+1]-y[i]
+            vt1=t[i+1]-t[i]
+            vx2=x[i]-x[i-1]
+            vy2=y[i]-y[i-1]
+            vt2=t[i]-t[i-1]
+            dt=t[i+1]-t[i-1]
+            angle=(vx1*vx2+vy1*vy2)
+            angle3d=(angle+vt1*vt2)
+            if dt==0:
+                continue
+            r13d=(vx1**2+vy1**2+vt1**2)**0.5
+            r23d=(vx2**2+vy2**2+vt2**2)**0.5
+            if r13d==0 or r23d==0:
+                continue
+            angle3d/=r13d
+            angle3d/=r23d
+            arr3d.append(angle3d)
+            if angle>-1.1 and angle<=-0.6:
+                angle_arr3d[0]+=1
+            elif angle>-0.6 and angle<=-0.3:
+                angle_arr3d[1]+=1
+            elif angle>-0.3 and angle<=0.3:
+                angle_arr3d[2]+=1
+            elif angle>0.3 and angle<1:
+                angle_arr3d[3]+=1
+            elif angle>=1.0:
+                angle_arr3d[4]+=1
+    
+    n=float(sum(angle_arr3d))
+    # angle_arr=angle_arr/float(n)
     tmp=[]
-    if use_all==True:
-        pass
-    else:
-        # has changed x towards so must not be machine
-        if get_X_PN(mouse)==True:  
-            return False
-       
-    anglenum=get_distribution_angle(mouse)
-    tmp.extend(anglenum)
-    # dv=get_derivative(mouse)
-    # tmp.extend(dv)
-    return np.array(tmp)
+    # tmp.extend(angle_arr.tolist())
+    tmp.extend(angle_arr3d.tolist())
+    # tmp.append(n)
+    # lastfive=getfivex(arr3d,range(len(arr3d)-5,len(arr3d)))
+    # tmp.extend(lastfive)
+    # tmp.append(mouse[2][0])
+    # tmp.append(mouse[2][-1])
+    return tmp
 
 def getfeature(idx,mouse,goal,label,use_all=False):
     tmp=[]
@@ -161,7 +229,9 @@ def getfeature(idx,mouse,goal,label,use_all=False):
         # if anglenum[2]/anglenum[0]>0.8:
         #     if anglenum[1]>0.0 and anglenum[1]/anglenum[0]<0.05:
         #         return True
-    anglenum=get_distribution_angle(mouse)
+    # anglenum=get_distribution_3dangle_rect_five(mouse)
+    # anglenum=get_distribution_3dangle_five(mouse)
+    anglenum=get_distribution_3dangle(mouse)
     tmp.extend(anglenum)
     # dv=get_derivative(mouse)
     # tmp.extend(dv)
@@ -170,7 +240,8 @@ def getfeature(idx,mouse,goal,label,use_all=False):
 def testResultAll(clf,scaler,pca,savepath='./data/0713tmp.txt',stop=1200):
     ds=dataset.DataSet()
     allnum=0
-    mclass=[[],[],[],[],[]]
+    mclass=[[],[],[],[],[],[],[],[]]
+    rclass=[[],[],[],[],[],[],[],[]]
     np.set_printoptions(formatter={'float':lambda x: "%5.5f"%float(x)})
     inarea=[0]*3
 
@@ -181,7 +252,51 @@ def testResultAll(clf,scaler,pca,savepath='./data/0713tmp.txt',stop=1200):
         idx,mouse,goal,label=ds.readTestFile()
         if idx==False:
             break
+        # if idx==136:
+        #     print getfeature(idx,mouse,goal,label)
+        # if idx==139:
+        #     # print mouse
 
+        #     print getfeature(idx,mouse,goal,label)
+        #     ax=plt.figure()
+        #     fig = plt.figure()  
+        #     ax = fig.add_subplot(111, projection='3d')
+        #     ax.scatter(mouse[0],mouse[1],mouse[2])
+        #     plt.show()
+        #     exit()
+        # if idx in [136,139,143,145]:
+        #     # ax=plt.figure()
+        #     # plt.plot(mouse[0],mouse[1])
+        #     # plt.savefig('./data/notfind/3dx%d.png'%idx)
+        #     fig = plt.figure()  
+        #     ax = fig.add_subplot(111, projection='3d')
+        #     if idx in [139]:
+        #         c='b'
+        #     else:
+        #         c='g' 
+        #     ax.plot(mouse[0],mouse[1],mouse[2],c=c)
+
+        #     plt.title(str(idx))
+        #     plt.savefig("./data/notfind/3dx%d.png"%idx)
+        #     plt.clf()
+        #     plt.close()
+        # if idx in [136,139,143,145]:
+        #     # ax=plt.figure()
+        #     # plt.plot(mouse[0],mouse[1])
+        #     # plt.savefig('./data/notfind/3dx%d.png'%idx)
+        #     if idx in [139]:
+        #         c='b'
+        #     else:
+        #         c='g' 
+
+        #     plt.plot(mouse[0],mouse[1],c=c)
+        #     plt.title(str(idx))
+        #     plt.savefig("./data/notfind/2dy%d.png"%idx)
+        #     plt.clf()
+        #     plt.close()
+
+        # if idx>200:
+        #     exit()
         tmp=getfeature(idx,mouse,goal,label)
         if type(tmp) is bool:
             if tmp==False:
@@ -193,109 +308,40 @@ def testResultAll(clf,scaler,pca,savepath='./data/0713tmp.txt',stop=1200):
             tmp=scaler.transform([tmp])
             # tmp=pca.transform(tmp)
             r=clf.predict(tmp)
-
-            if r[0]==0: # >0 is manual
-                mclass[3].append(idx)
-                pass
+            rclass[0].append(idx)
+            if r[0]==1: # >0 is manual
+                rclass[1].append(idx)
+            elif r[0]==2:
+                rclass[2].append(idx)
+            elif r[0]==3:
+                rclass[3].append(idx)
+            elif r[0]==4:
+                rclass[4].append(idx)
             else:
-                mclass[0].append(idx)
-                mclass[2].append(idx)
-
-            # flag=0
-            # for i in range(len(tmp)-1):
-            #     if tmp[i]==1:
-            #         flag+=1
-            #     if tmp[i]/tmp[-1] >0.8:
-            #         flag+=1
-            # if flag==2:
-            #     mclass[0].append(idx)
-            #     mclass[2].append(idx)
-
-            # pass
-            # if int(idx)>1000:
-            #     # print inarea
-            #     plt.show()
-            #     exit()  
-            # if tmp==1:
-            #     # 370
-            #     inarea[0]+=1
-            #     if int(idx) in [139,249,253,359,416,435,478,483,485,505,516,542,548,549,630,691,703,721,740,777,781,786,867,873,987,1002]:
-            #         # plt.plot(mouse[0],mouse[1],c='b')
-            #         ax.plot(mouse[0],mouse[1],mouse[2],c='b')
-            #         # if mouse
-            #         # if mouse[1][0]<0:
-            #         inarea[1]+=1
-            #             # print idx
-            #     else:
-            #         inarea[2]+=1
-            #         if mouse[1][0]>0 and np.random.randint(0,10)==1 and mouse[1].max()<2800 and mouse[1].min()>2200:
-            #             # print idx
-            #             # pass
-            #             ax.plot(mouse[0],mouse[1],mouse[2],c='g')
-                        # plt.plot(mouse[0],mouse[1],c='g')
-            # if tmp[]
-            # if idx==139:
-            #     print tmp 
-            #     exit()
-            # tmp=scaler.transform([tmp])
-            # # tmp=pca.transform(tmp)
-            # r=clf.predict(tmp)
-            # # if int(idx) in [139,249]:
-            # #     print idx,r,tmp
-            # #     # print mouse[0]/
-            # #     # print mouse[1]
-            # #     x=mouse[0]
-            # #     y=mouse[1]
-            # #     x=x/x.max()
-            # #     y=y/y.max()
-            # #     print x
-            # #     print y
-            # #     plt.plot(x,y)
-            # #     plt.show()
-            # #     print idx,r
-            # if r[0]==0: # >0 is manual
-            #     pass
-            #     # print idx
-            #     # if int(idx)>1000:
-            #     #     exit()
-            #     # if int(idx) in [139,249,253,359,370,416,435,478,483,485,505,516,542,548,549,630,691,703,721,740,777,781,786,867,873,987,1002]:
-            #     #     print tmp
-            #     # print idx,len(mouse[0])
-            #     # fig = plt.figure()  
-            #     # ax = fig.add_subplot(111, projection='3d') 
-            #     # ax.plot(mouse[0],mouse[1],mouse[2])
-            #     # path='./data/notfind/'
-            #     # plt.savefig(path+"3d%s.png"%idx)
-            #     # plt.clf()
-            #     # plt.close()
-            #     # # plt.show()
-            #     # # exit()
-            #     # pass
-            # else:
-            #     if r[0]==2:
-            #         # print idx
-            #     # pass
-            #         mclass[0].append(idx)
-            #         mclass[2].append(idx)
+                rclass[5].append(idx)
 
         if stop!=-1 and allnum>stop:
             break
         if allnum%1000==0:
-            print idx,len(mclass[0]),len(mclass[1]),len(mclass[2])
+            print idx,len(mclass[0]),len(mclass[1])
+            print len(rclass[0]),len(rclass[1]),len(rclass[2]),len(rclass[3]),len(rclass[4]),len(rclass[5])
+            print "======"
         allnum+=1
-    print "all:",len(mclass[0]),len(mclass[1]),len(mclass[2]),len(mclass[3])
+    print "all:",len(mclass[0]),len(mclass[1]),len(rclass[0])
     savestr=createstr(mclass[0])
     with open(savepath,'w') as f:
         f.write(savestr)
-    savestr=createstr(mclass[1])
-    with open("./data/0714_pos.txt",'w') as f:
-        f.write(savestr)
-    savestr=createstr(mclass[2])
-    with open("./data/0714_class.txt",'w') as f:
-        f.write(savestr)    
-    savestr=createstr(mclass[3])
-    with open("./data/0714_class0.txt",'w') as f:
-        f.write(savestr)
+   
+    for i in range(1,6):
+        savestr=createstr(rclass[i])
+        with open("./data/15/r_%d.txt"%i,'w') as f:
+            f.write(savestr)
+    # savestr=createstr(mclass[2])
+    # with open("./data/0714_class.txt",'w') as f:
+    #     f.write(savestr)    
+    # savestr=createstr(mclass[3])
+    # with open("./data/0714_class0.txt",'w') as f:
+    #     f.write(savestr)
 
     print "ok"
 
@@ -312,14 +358,14 @@ def maintest():
     # print get_distribution_angle(mouses[0])
     # exit()
     for i in range(n):
-        # tmp=getfeature(i,mouses[i],goals[i],0,use_all=True)
-        tmp=getfeaturetest(i,mouses[i],goals[i],0,use_all=False)
+        tmp=getfeature(i,mouses[i],goals[i],0,use_all=True)
+        # tmp=getfeaturetest(i,mouses[i],goals[i],0,use_all=False)
         if type(tmp) is bool:
             # print i,tmp
             continue
         if i in range(0,2600):
-            labels_tmp.append(0)
-        elif i in range(2600,2650):
+            continue
+        if i in range(2600,2650):
             # labels_tmp.append(1)
             labels_tmp.append(1)
         elif i in range(2650,2700):
@@ -327,11 +373,11 @@ def maintest():
             labels_tmp.append(2)
             # labels_tmp.append(2)
         elif i in range(2700,2800):
-            labels_tmp.append(3)
+            labels_tmp.append(1)
         elif i in range(2800,2900):
-            labels_tmp.append(4)
-        else:
-            labels_tmp.append(5)
+            labels_tmp.append(2)
+        else: 
+            labels_tmp.append(1)
         mouses_tmp.append(tmp)
 
     labels=np.array(labels_tmp)
@@ -351,15 +397,16 @@ def maintest():
 
     dt=datadeal.DataTrain()
     # about 17 w
-    clf = MLPClassifier(alpha=0,
+    clf = MLPClassifier(alpha=0.5,
         activation='logistic', \
-        hidden_layer_sizes=(15,15),random_state=0,solver='lbfgs',\
-        max_iter=650,early_stopping=True, epsilon=1e-04,\
+        hidden_layer_sizes=(11,11),random_state=0,solver='lbfgs',\
+        # hidden_layer_sizes=(15,15),random_state=0,solver='lbfgs',\
+        max_iter=250,early_stopping=True, epsilon=1e-04,\
         # learning_rate_init=0.1,learning_rate='invscaling',
     )
     clf.fit(vector,labels)
     scaler = preprocessing.StandardScaler().fit(scaler_vector)
-    testResultAll(clf,scaler,pca,savepath='./data/0714tmp.txt',stop=-1)
+    testResultAll(clf,scaler,pca,savepath='./data/15/07tmp.txt',stop=-1)
 
 def maintrain():
     ds=dataset.DataSet()
@@ -372,8 +419,8 @@ def maintrain():
     labels_tmp=[]
     mouses_tmp=[]
     for i in range(n):
-        # tmp=getfeature(i,mouses[i],goals[i],0,use_all=True)
-        tmp=getfeaturetest(i,mouses[i],goals[i],0,use_all=False)
+        tmp=getfeature(i,mouses[i],goals[i],0,use_all=True)
+        # tmp=getfeaturetest(i,mouses[i],goals[i],0,use_all=False)
         if type(tmp) is bool:
             # print i,tmp
             continue
@@ -398,10 +445,20 @@ def maintrain():
         # if i in range(2650,2700):
         #     mouses_tmp.append(tmp)
         # labels_tmp.append(labels[i])
+
     labels=np.array(labels_tmp)
     # print len(mouses_tmp)
     vector=np.array(mouses_tmp)
     scaler_vector=vector
+    # for i in range(2000,2050):
+    #     print vector[i]
+    #     plt.plot(range(5),vector[i],c='b')
+    # for i in range(2600,2650):
+    #     print vector[i]
+    #     plt.plot(range(5),vector[i],c='g')
+    # plt.show()
+    # exit(0)
+
     # print vector.shape
     # exit()
     # plt.scatter(range(len(vector)),vector[:,1])
@@ -413,22 +470,23 @@ def maintrain():
 
     dt=datadeal.DataTrain()
     # about 17 w
-    clf = MLPClassifier(alpha=0,
+    clf = MLPClassifier(alpha=0.5,
         activation='logistic', \
-        hidden_layer_sizes=(12,15),random_state=0,solver='lbfgs',\
+        # 11,11 
+        hidden_layer_sizes=(11,11),random_state=0,solver='lbfgs',\
         max_iter=250,early_stopping=True, epsilon=1e-04,\
         # learning_rate_init=0.1,learning_rate='invscaling',
     )
     np.set_printoptions(formatter={'float':lambda x: "%d"%float(x)})
-    confusion=dt.trainTest(clf,vector,labels,10.0,classn=6,returnconfusion=True)
+    confusion=dt.trainTest(clf,vector,labels,4.0,classn=6,returnconfusion=True)
     # dw=datadraw.DataDraw('2d')
     # genre_list, name, title,max,save=False
     confusion=confusion**0.1
-    datadraw.plot_confusion_matrix(confusion,range(6),'a','a',max=confusion.max())
+    # datadraw.plot_confusion_matrix(confusion,range(6),'a','a',max=confusion.max())
 
 def main():
-    maintrain()   
-    # maintest()
+    # maintrain()   
+    maintest()
 
 if __name__=="__main__":
     main()
