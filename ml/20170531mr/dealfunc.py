@@ -153,9 +153,9 @@ def printdemo(vector):
 def getMMMS(d):
     return [d.min(),d.max(),d.mean(),d.std()]
 
-def getfivex(d,idxx):
+def getfivex(d,idxx,num=5):
     xn=len(d)
-    for i in range(5):
+    for i in range(num):
         if idxx[i]<0:
             idxx[i]=0
         if idxx[i]>(xn-1):
