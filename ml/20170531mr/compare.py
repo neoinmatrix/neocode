@@ -41,19 +41,18 @@ file_a='./data/BDC1236_20170711_p.txt' # 95.70 19901 19083
 # file_b='0712tmp.txt'
 # file_b='0713tmp.txt'
 # file_b='./data/BDC1236_20170709.txt'   # 95.69 19256 18710 
-file_b='./data/16/m_0.txt' 
-compare(file_a,file_b) 
+# file_b='./data/16/m_0.txt' 
+# compare(file_a,file_b) 
 file_b='./data/17/m_0.txt'  
+compare(file_a,file_b)
+file_b='./data/17/m_1.txt'  
 compare(file_a,file_b)
 
 compath='./data/17/'
-for i in range(1,6): 
+for i in range(1,5): 
     file_b=compath+'r_%d.txt'%i
     file_s=compath+'s_%d.txt'%i
     compare(file_a,file_b,file_s)
-
-
-
 
 import datadeal
 # print "====="
@@ -63,3 +62,4 @@ import datadeal
 # print datadeal.calcScoreRerve(0.9480,20045) #18985
 # print datadeal.calcScoreRerve(0.9270,18683) #17807
 # print datadeal.calcScoreRerve(0.9489,19422) #18648
+print datadeal.calcScoreRerve(0.9528,20376) #19271
