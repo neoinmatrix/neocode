@@ -43,21 +43,24 @@ file_a='./data/BDC1236_20170711_p.txt' # 95.70 19901 19083
 # file_b='./data/BDC1236_20170709.txt'   # 95.69 19256 18710 
 # file_b='./data/16/m_0.txt' 
 # compare(file_a,file_b) 
-file_b='./data/17/m_0.txt'  
-compare(file_a,file_b)
-file_b='./data/17/m_1.txt'  
-compare(file_a,file_b)
+file_b='./data/18/m_0.txt'  
+compare(file_a,file_b,'./data/18/sm_0.txt')
+file_b='./data/18/m_1.txt'  
+compare(file_a,file_b,'./data/18/sm_1.txt')
 
-compath='./data/17/'
-for i in range(1,5): 
-    file_b=compath+'r_%d.txt'%i
-    file_s=compath+'s_%d.txt'%i
-    compare(file_a,file_b,file_s)
+file_b='./data/18/m_3.txt'  
+compare(file_a,file_b,'./data/18/sm_1.txt')
+
+# compath='./data/18/'
+# for i in range(1,5): 
+#     file_b=compath+'r_%d.txt'%i
+#     file_s=compath+'s_%d.txt'%i
+#     compare(file_a,file_b,file_s)
 
 import datadeal
 # print "====="
 # print datadeal.calcScoreRerve(0.9973,20000) #19946
-# print datadeal.calcScoreRerve(0.9570,19901) #19083
+# print datadeal.calcScoreRerved
 # print datadeal.calcScoreRerve(0.9569,19256) #18710
 # print datadeal.calcScoreRerve(0.9480,20045) #18985
 # print datadeal.calcScoreRerve(0.9270,18683) #17807

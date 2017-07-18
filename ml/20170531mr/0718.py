@@ -72,13 +72,7 @@ def getfeature(idx,mouse,goal,label,use_all=False):
         # has changed x towards so must not be machine
         if get_X_PN(mouse)==True:  
             return False
-        # the x >437 must be machine 
-        if mouse[0][0]>=437:
-            return True
-        # exists acute angle must be machine 
-        sangle=get_sharp_angle(mouse)
-        if sangle==True:
-            return True
+        
     anglenum=get_distribution_3dangle(mouse)
     tmp.extend(anglenum)
     return np.array(tmp)
@@ -103,9 +97,9 @@ def getfeature2(idx,mouse,goal,label,use_all=False):
 
 def draw_analyst(idx,mouse,goal,label):
     pass
-    notfind=[1,5,45,50,55,57,58,62,63,65,98,99,100,111,132,145,170,182,183,202,226,232,260,266,304,353,356,362,365,371,373,380,390,394,396,423,457,468,477,484,490,504,506,509,534,548,606,630,654,659,671,680,691,693,695,701,705,717,738,743,748,751,753,757,760,772,781,790,801,816,832,836,842,870,879,886,888,907,920,921,941,968,974,989,990,993,997]
-    nmachine=[548,630,691,781]
-    path='./data/17/notfind/'
+    notfind=[120,122,129,146,268,276]
+    nmachine=[146,268,276]
+    path='./data/18/notfind/'
     if idx in notfind:
         print idx
         if idx in nmachine:
@@ -133,14 +127,14 @@ def draw_analyst(idx,mouse,goal,label):
         plt.clf()
         plt.close()
 
-    if idx>1000:
+    if idx>300:
         exit()
 
 def draw_analyst_single(idx,mouse,goal,label):
     pass
     # notfind=[1,5,45,50,55,57,58,62,63,65,98,99,100,111,132,145,170,182,183,202,226,232,260,266,304,353,356,362,365,371,373,380,390,394,396,423,457,468,477,484,490,504,506,509,534,548,606,630,654,659,671,680,691,693,695,701,705,717,738,743,748,751,753,757,760,772,781,790,801,816,832,836,842,870,879,886,888,907,920,921,941,968,974,989,990,993,997]
-    notfind=[1,5,45,50,548,630,691,781]
-    nmachine=[548,630,691,781]
+    notfind=[120,122,129,46,268,276]
+    nmachine=[46,268,276]
     path='./data/17/notfind/'
     if idx in notfind:
         print idx
@@ -157,7 +151,7 @@ def draw_analyst_single(idx,mouse,goal,label):
         plt.clf()
         plt.close()
 
-    if idx>1000:
+    if idx>300:
         exit()
 
 def testResult(config={}):
@@ -169,54 +163,13 @@ def testResult(config={}):
     scaler_extra=config["scaler_line"]
     clf_extra=config["clf_line"]
 
-    ds=dataset.DataSet()
+    ds=dataset.DataSet(testfp='/data/dsjtzs_txfz_testB.txt')
     allnum=0
     mclass=[[],[],[],[],[],[],[],[]]
     rclass=[[],[],[],[],[],[],[],[]]
     np.set_printoptions(formatter={'float':lambda x: "%5.5f"%float(x)})
     while True:
         allnum+=1
-        idx,mouse,goal,label=ds.readTestFile()
-        if idx==False:
-            break
-        # draw_analyst_single(idx,mouse,goal,label)
-        # draw_analyst(idx,mouse,goal,label)
-        tmp=getfeature(idx,mouse,goal,label)
-        if type(tmp) is bool:
-            if tmp==False:
-                pass
-            elif tmp==True:
-                mclass[0].append(idx)
-                mclass[1].append(idx)
-        else:
-            tmp=scaler.transform([tmp])
-            # tmp=pca.transform(tmp)
-            r=clf.predict(tmp)
-            rclass[0].append(idx)
-            if r[0]==1:
-                # this class is other line type 
-                tmp=getfeature2(idx,mouse,goal,label)
-                tmp=scaler_extra.transform([tmp])
-                rr=clf_extra.predict(tmp)
-                if rr[0]==0:
-                    mclass[0].append(idx)
-                    rclass[1].append(idx)
-                pass
-            else:
-                # this class is L or \ line type
-                rclass[2].append(idx)
-                tmp=getfeature2(idx,mouse,goal,label)
-                tmp=scaler_extra.transform([tmp])
-                rr=clf_extra.predict(tmp)
-                if rr[0]==0:
-                    # this is according dx/dt find machine
-                    # mclass[0].append(idx)
-                    mclass[0].append(idx)
-                    rclass[3].append(idx)
-                else:
-                    # this is not machine
-                    rclass[4].append(idx)
-
         if stop!=-1 and allnum>stop:
             break
         if allnum%1000==0:
@@ -224,14 +177,68 @@ def testResult(config={}):
             for i in range(len(mclass)):
                 if len(mclass[i])>0:
                     tmp1+="%d "%len(mclass[i])
-            print idx,tmp1
+            print allnum
+            print tmp1
             tmp2=''
             for i in range(len(rclass)):
                 if len(rclass[i])>0:
                     tmp2+="%d "%len(rclass[i])
             print tmp2
             print "======"
-    
+
+        idx,mouse,goal,label=ds.readTestFile()
+        if idx==False:
+            break
+        # draw_analyst_single(idx,mouse,goal,label)
+        # draw_analyst(idx,mouse,goal,label)
+
+        # the x >=437 must be machine 
+        if mouse[0][0]>=437:
+            mclass[0].append(idx)
+            mclass[1].append(idx)
+            continue
+
+        # exists acute angle must be machine 
+        sangle=get_sharp_angle(mouse)
+        if sangle==True:
+            mclass[0].append(idx)
+            mclass[2].append(idx)
+            continue
+
+        tmp=getfeature(idx,mouse,goal,label)
+        if type(tmp) is bool and tmp==False:
+            mclass[3].append(idx)
+            continue
+
+        # the special tracking
+        rclass[0].append(idx)
+        tmp=scaler.transform([tmp])
+        r=clf.predict(tmp)
+        
+        if r[0]==1:
+            rclass[1].append(idx)
+            # this class is other line type 
+            tmp=getfeature2(idx,mouse,goal,label)
+            tmp=scaler_extra.transform([tmp])
+            rr=clf_extra.predict(tmp)
+            if rr[0]==0:
+                mclass[0].append(idx)
+                rclass[2].append(idx)
+            pass
+        else:
+            # this class is L or \ line type
+            rclass[3].append(idx)
+            tmp=getfeature2(idx,mouse,goal,label)
+            tmp=scaler_extra.transform([tmp])
+            rr=clf_extra.predict(tmp)
+            if rr[0]==0:
+                # this is according dx/dt find machine
+                mclass[0].append(idx)
+                rclass[4].append(idx)
+            else:
+                # this is not machine
+                rclass[5].append(idx)   
+
     getSummary(mclass,rclass,savepath)
     print "ok"
 
@@ -315,8 +322,8 @@ def maintest():
         "scaler":scaler,
         "clf":clf,
         "pca":'',
-        "savepath":'./data/18/',
-        "stop":1200,
+        "savepath":'./data/18b/',
+        "stop":-1,
         "scaler_line":scaler2,
         "clf_line":clf2,
     }
