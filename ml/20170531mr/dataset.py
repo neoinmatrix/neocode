@@ -10,8 +10,8 @@ class DataSet:
     def __init__(self,trainfp='',testfp=''):
         if  trainfp!='':
             self.train_file_path=trainfp
-        if  trainfp!='':
-            self.test_path=testfp
+        if  testfp!='':
+            self.test_file_path=testfp
 
     def __del__(self): 
         if self.test["state"]==True:

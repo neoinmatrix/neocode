@@ -43,19 +43,19 @@ file_a='./data/BDC1236_20170711_p.txt' # 95.70 19901 19083
 # file_b='./data/BDC1236_20170709.txt'   # 95.69 19256 18710 
 # file_b='./data/16/m_0.txt' 
 # compare(file_a,file_b) 
-file_b='./data/18/m_0.txt'  
-compare(file_a,file_b,'./data/18/sm_0.txt')
-file_b='./data/18/m_1.txt'  
-compare(file_a,file_b,'./data/18/sm_1.txt')
 
-file_b='./data/18/m_3.txt'  
-compare(file_a,file_b,'./data/18/sm_1.txt')
 
-# compath='./data/18/'
-# for i in range(1,5): 
-#     file_b=compath+'r_%d.txt'%i
-#     file_s=compath+'s_%d.txt'%i
-#     compare(file_a,file_b,file_s)
+compath='./data/19/'
+for i in range(0,4): 
+    file_b=compath+'m_%d.txt'%i
+    file_s=compath+'ms_%d.txt'%i
+    compare(file_a,file_b,file_s)
+print "================================================"
+compath='./data/19/'
+for i in range(1,5): 
+    file_b=compath+'r_%d.txt'%i
+    file_s=compath+'s_%d.txt'%i
+    compare(file_a,file_b,file_s)
 
 import datadeal
 # print "====="

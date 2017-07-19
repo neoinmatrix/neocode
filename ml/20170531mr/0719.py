@@ -43,8 +43,8 @@ def get_t_T(mouse):
     trate=sum(t[:5])/abs(t[-1])
     tmp.append(trate)
     # get 3 of first time 
-    tget=getfivex(t,range(0,3),3)
-    tmp.extend(tget)
+    t3=getfivex(t,range(0,3),3)
+    tmp.extend(t3)
     # judge the second point if large than 500ms
     if  len(mouse[2])>1:
         tmp.append(1.0 if mouse[2][1]>500 else 0.0)
@@ -64,33 +64,14 @@ def get_t_T(mouse):
 
     return tmp
 
-def getfeature(idx,mouse,goal,label,use_all=False):
+def getfeature(idx,mouse,goal,label):
     tmp=[]
-    if use_all==True:
-        pass
-    else:
-        # has changed x towards so must not be machine
-        if get_X_PN(mouse)==True:  
-            return False
-        
     anglenum=get_distribution_3dangle(mouse)
     tmp.extend(anglenum)
     return np.array(tmp)
 
-def getfeature2(idx,mouse,goal,label,use_all=False):
+def getfeature2(idx,mouse,goal,label):
     tmp=[]
-    if use_all==True:
-        pass
-    else:
-        # has changed x towards so must not be machine
-        if get_X_PN(mouse)==True:  
-            return False
-        # the x >437 must be machine 
-        # if mouse[0][0]>=437:
-        #     return True
-        # sangle=get_sharp_angle(mouse)
-        # if sangle==True:
-        #     return True
     lastfive=get_t_T(mouse)
     tmp.extend(lastfive)
     return np.array(tmp)
@@ -163,7 +144,8 @@ def testResult(config={}):
     scaler_extra=config["scaler_line"]
     clf_extra=config["clf_line"]
 
-    ds=dataset.DataSet(testfp='./data/dsjtzs_txfz_testB.txt')
+    # ds=dataset.DataSet(testfp='./data/dsjtzs_txfz_testB.txt')
+    ds=dataset.DataSet()
     allnum=0
     mclass=[[],[],[],[],[],[],[],[]]
     rclass=[[],[],[],[],[],[],[],[]]
@@ -192,6 +174,10 @@ def testResult(config={}):
         # draw_analyst_single(idx,mouse,goal,label)
         # draw_analyst(idx,mouse,goal,label)
 
+        # has changed x towards so must not be machine
+        if get_X_PN(mouse)==True:
+            continue
+
         # the x >=437 must be machine 
         if mouse[0][0]>=437:
             mclass[0].append(idx)
@@ -206,27 +192,22 @@ def testResult(config={}):
             continue
 
         tmp=getfeature(idx,mouse,goal,label)
-        if type(tmp) is bool and tmp==False:
-            mclass[3].append(idx)
-            continue
 
         # the special tracking
         rclass[0].append(idx)
         tmp=scaler.transform([tmp])
         r=clf.predict(tmp)
         
-        if r[0]==1:
+        if r[0]==1: # this class is other line type 
             rclass[1].append(idx)
-            # this class is other line type 
             tmp=getfeature2(idx,mouse,goal,label)
             tmp=scaler_extra.transform([tmp])
             rr=clf_extra.predict(tmp)
             if rr[0]==0:
                 mclass[0].append(idx)
                 rclass[2].append(idx)
-            pass
-        else:
-            # this class is L or \ line type
+            continue
+        else:   # this class is L or \ line type
             rclass[3].append(idx)
             tmp=getfeature2(idx,mouse,goal,label)
             tmp=scaler_extra.transform([tmp])
@@ -255,10 +236,7 @@ def maintest():
     labels_tmp2=[]
  
     for i in range(n):
-        tmp=getfeature(i,mouses[i],goals[i],0,use_all=True)
-        if type(tmp) is bool:
-            # print i,tmp
-            continue
+        tmp=getfeature(i,mouses[i],goals[i],0)
         if i in range(0,2600):
             continue
         if i in range(2600,2650):
@@ -274,12 +252,11 @@ def maintest():
         mouses_tmp.append(tmp)
 
     for i in range(n):
-        tmp=getfeature2(i,mouses[i],goals[i],0,use_all=False)
-        if type(tmp) is bool:
-            # print i,tmp
+        if get_X_PN(mouses[i])==True:
             continue
-        labels_tmp2.append(labels[i])
+        tmp=getfeature2(i,mouses[i],goals[i],0)
         mouses_tmp2.append(tmp)
+        labels_tmp2.append(labels[i])
 
     labels=np.array(labels_tmp)
     vector=np.array(mouses_tmp)
@@ -314,6 +291,7 @@ def maintest():
         max_iter=250,early_stopping=True, epsilon=1e-04,\
         # learning_rate_init=0.1,learning_rate='invscaling',
     )
+    # clf2=SVC(C=1.2)
     clf.fit(vector,labels)
     clf2.fit(vector2,labels2)
     scaler = preprocessing.StandardScaler().fit(scaler_vector)
@@ -322,7 +300,7 @@ def maintest():
         "scaler":scaler,
         "clf":clf,
         "pca":'',
-        "savepath":'./data/18b/',
+        "savepath":'./data/19/',
         "stop":-1,
         "scaler_line":scaler2,
         "clf_line":clf2,
@@ -396,12 +374,13 @@ def maintrain():
     # vector=pca.transform(vector)
 
     dt=datadeal.DataTrain()
-    clf2 = MLPClassifier(alpha=0.2,
-        activation='logistic', \
-        hidden_layer_sizes=(11,11),random_state=0,solver='lbfgs',\
-        max_iter=250,early_stopping=True, epsilon=1e-04,\
-        # learning_rate_init=0.1,learning_rate='invscaling',
-    )
+    # clf2 = MLPClassifier(alpha=0.2,
+    #     activation='logistic', \
+    #     hidden_layer_sizes=(11,11),random_state=0,solver='lbfgs',\
+    #     max_iter=250,early_stopping=True, epsilon=1e-04,\
+    #     # learning_rate_init=0.1,learning_rate='invscaling',
+    # )
+    clf=SVC(C=0.2)
     np.set_printoptions(formatter={'float':lambda x: "%d"%float(x)})
     # confusion=dt.trainTest(clf,vector,labels,4.0,classn=6,returnconfusion=True)
     confusion=dt.trainTest(clf2,vector2,labels2,4.0,classn=2,returnconfusion=True)
