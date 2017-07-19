@@ -25,6 +25,7 @@ def compare(file_a,file_b,samefile=''):
             # print i
             count+=1
             str_result+=str(i)+"\n"
+    print "b:",file_b
     print "file_a: ",len(rightidx)
     print "file_b: ",len(myidx)
     print "samenum:",count
