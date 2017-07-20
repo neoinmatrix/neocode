@@ -43,7 +43,13 @@ file_a='./data/BDC1236_20170711_p.txt' # 95.70 19901 19083
 # file_b='0713tmp.txt'
 # file_b='./data/BDC1236_20170709.txt'   # 95.69 19256 18710 
 # file_b='./data/16/m_0.txt' 
-# compare(file_a,file_b) 
+
+# file_a='./data/17965.txt' 
+file_a='./data/20/b_20477.txt' 
+file_b='./data/07201.txt' 
+
+compare(file_a,file_b)
+exit() 
 
 
 compath='./data/19/'

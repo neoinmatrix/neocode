@@ -1,5 +1,5 @@
-var d1=new Date("2017-02-24T00:00:00")
-var d2=new Date("2017-02-25T00:00:00")
+var d1=new Date("2017-07-24T00:00:00")
+var d2=new Date("2017-07-25T00:00:00")
 var dt1=d1.getTime()/1000;
 var dt2=d2.getTime()/1000;
 db.api.aggregate(
