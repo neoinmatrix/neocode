@@ -396,7 +396,7 @@ def maintest():
     # )
     clf_x437 = MLPClassifier(alpha=0.6,
         activation='logistic', \
-        hidden_layer_sizes=(13,9),random_state=0,solver='lbfgs',\
+        hidden_layer_sizes=(9,13),random_state=0,solver='lbfgs',\
         max_iter=250,early_stopping=True, epsilon=1e-04,\
         # learning_rate_init=0.1,learning_rate='invscaling',
     )
@@ -413,7 +413,7 @@ def maintest():
     clf.fit(vector,labels)
     clf2.fit(vector2,labels2)
     clf_x437.fit(vector_x437,labels_x437)
-    # clf_sharp.fit(vector_sharp,labels_sharp)
+    clf_sharp.fit(vector_sharp,labels_sharp)
 
     scaler = preprocessing.StandardScaler().fit(scaler_vector)
     scaler2 = preprocessing.StandardScaler().fit(scaler_vector2)
