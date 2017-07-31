@@ -1,21 +1,29 @@
 import numpy as np
 np.set_printoptions(formatter={'float':lambda x: "%10.2f"%float(x)})
 
-m=110598.0
-s=0.4246
-n=np.array(range(10*10000,20*10000+10000,10000),dtype=np.float)
+m=188008.0
+s=0.6044
+n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
 x=s*0.2*(2*n+3*m)
 
 print n
 print x
 
-mh=110598.0
-sh=0.4246
+# m=110598.0
+# s=0.4246
+# n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
+# x=s*0.2*(2*n+3*m)
 
-ml=115598.0
-sl=0.4146
-n=1.5*(sh*mh-sl*ml)/(sl-sh)
-print n
+# print n
+# print x
+
+# mh=110598.0
+# sh=0.4246
+
+# ml=110696.0
+# sl=0.4224
+# n=1.5*(sh*mh-sl*ml)/(sl-sh)
+# print n
 
 # the evaluated about 15w items with machine 
 # 
@@ -27,10 +35,17 @@ print n
 # print "========================"
 # m=290598.0
 # s=0.228
-# n=np.array(range(10*10000,20*10000+10000,10000),dtype=np.float)
+# n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
 # x=s*0.2*(2*n+3*m)
 
 # print n
 # print x
 
+# m=158043.0
+# s=0.4295
+# n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
+# x=s*0.2*(2*n+3*m)
+
+# print n
+# print x
 

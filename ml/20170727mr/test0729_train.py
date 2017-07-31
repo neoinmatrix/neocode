@@ -10,6 +10,7 @@ from sklearn import  metrics
 # import matplotlib.pyplot as plt 
 from sklearn import preprocessing
 # from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
 
 output = sys.argv[1]
 input = sys.argv[2]
@@ -180,7 +181,8 @@ def trainTest(clf,X,y,fold=10.0,classn=2,returnconfusion=False):
     if returnconfusion:
         return confusion
 
-clf=SVC(C=0.5)
+# clf=SVC(C=0.5)
+clf=RandomForestClassifier(n_estimators=10)
 # print len(trains)
 # print trains[3]
 trainTest(clf,vector,lables)
