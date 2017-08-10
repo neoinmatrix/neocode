@@ -172,20 +172,69 @@ def get_shape(mouse):
 
     return feat
 
-def get_convas(mouse):
+def get_all_statistic(mouse):
     x=mouse[0]
     y=mouse[1]
     t=mouse[2]
-    n=len(mouse[0])
-    x=x/x.max()
-    y=y/y.max()
-    t=t/t.max()
+    def getanalyst(tmp):
+        return [tmp.min(),tmp.max(),tmp.mean(),tmp.std()]
+    analyst=[]
+    analyst.extend(getanalyst(x))
+    analyst.extend(getanalyst(y))
+    analyst.extend(getanalyst(t))
+    return analyst
+
+def get_t_entropy(mouse):
+    t=mouse[2]
+    n=len(t)
+    ta=t[-1]
+    if ta==0:
+        ta=1.0
+    entropy=0.0
+    for i in range(1,n):
+        dt=t[i]-t[i-1]
+        if dt==0:
+            dt=1.0
+        if dt<0:
+            entropy=0.0
+            continue
+        p=float(dt)/float(ta)
+        p=p if p>0 else 1.0
+        entropy+=np.log(p)*p
+    entropy=entropy if entropy<0 else 0.0
+    return [entropy]
+
+def get_speed(mouse):
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+    xn=len(mouse[0])
+    vx=[0.0]
+    vy=[0.0]
+    for i in range(1,xn):
+        vspeed=(float(x[i])-float(x[i-1]))
+        vyspeed=(float(y[i])-float(y[i-1]))
+        dt=float(t[i])-float(t[i-1])
+        if dt==0:
+            continue
+        vspeed/=dt
+        vyspeed/=dt
+        vx.append(vspeed)
+        vy.append(vyspeed)
+    vx=np.array(vx)
+    vy=np.array(vy)
+    return [vx.max(),vx.min(),vx.mean(),vy.max(),vy.min(),vy.mean()]
+ 
 
 def get_feats(data):
     mouse=data[1]
     features=[]
-    features.extend(get_distx(mouse))
+    features.extend([mouse[0][0],mouse[2][0]])
     features.extend(get_shape(mouse))
+    features.extend(get_distx(mouse))
+    # features.extend(get_all_statistic(mouse))
+    features.extend(get_t_entropy(mouse))
+    features.extend(get_speed(mouse))
     data.append(features)
     return data
 
@@ -235,22 +284,36 @@ trains =trains.collect()
 vector_shape=[]
 lables_shape=[]
 
+vector_hard=[]
+lables_hard=[]
+
 for d in trains:
     idx=d[0]
     label=d[3]
     f1=d[4]
     # f2=d[5]
-    # f1.extend(f2)
+
     vector_shape.append(f1)
     lables_shape.append(label)
 
+    # vector_hard.append(f2)
+    # lables_hard.append(label)
+
 vector_shape=np.array(vector_shape)    
 lables_shape=np.array(lables_shape) 
-scaler_shape = preprocessing.StandardScaler().fit(vector_shape)
+scalar_easy = preprocessing.StandardScaler().fit(vector_shape)
 vector_shape = preprocessing.scale(vector_shape)
 
-clf_shape=SVC(C=1.5)
-clf_shape.fit(vector_shape,lables_shape)
+# vector_hard=np.array(vector_hard)    
+# lables_hard=np.array(lables_hard) 
+# scalar_hard = preprocessing.StandardScaler().fit(vector_hard)
+# vector_hard = preprocessing.scale(vector_hard)
+
+clf_easy=SVC(C=1.5)
+clf_easy.fit(vector_shape,lables_shape)
+
+# clf_hard=SVC(C=1.5)
+# clf_hard.fit(vector_hard,lables_hard)
 
 def inarea(mouse):
     if mouse[0][0]>=437:
@@ -259,28 +322,93 @@ def inarea(mouse):
                 return True
     return False
 
-def testDs(data,conf):
-    if get_sharp_angle(data[1])==True:
-        return True
-    if inarea(data[1])==True:
-        return True
+def inarea2(mouse):
+    if mouse[0][0]<370:
+        if mouse[0][0]>250:
+            if mouse[1][0]<2650 and mouse[1][0]>2450:
+                return True
+    return False
 
-    scalar=conf["scalar"]
-    clf=conf["clf"]    
+def testDs1(data,conf):
+    mouse=data[1]
+    if get_sharp_angle(mouse)==True:
+        return 1
+    if inarea(mouse):
+        return 2   
+    if inarea2(mouse):
+        scalar=conf["scalar_easy"]
+        clf=conf["clf_easy"]    
+        f1=data[4]
+        f1=scalar.transform([f1])
+        r=clf.predict(f1)
+        if r[0]==0: # machine
+            return 3 
+        else:
+            return 4
+
+    scalar=conf["scalar_hard"]
+    clf=conf["clf_hard"]    
+    f2=data[5]
+    f2=scalar.transform([f2])
+    r=clf.predict(f2)
+    if r[0]==0: # machine
+        return 5
+    else:
+        return 6
+  
+def testDs(data,conf):
+    mouse=data[1]
+    if get_sharp_angle(mouse)==True:
+        return True
+    if inarea(mouse):
+        return True  
+    scalar=conf["scalar_easy"]
+    clf=conf["clf_easy"]    
     f1=data[4]
     f1=scalar.transform([f1])
     r=clf.predict(f1)
     if r[0]==0: # machine
-        return True
+        return True 
     else:
         return False
 
-conf={"scalar":scaler_shape,"clf":clf_shape }
+    # if inarea2(mouse):
+    #     # return True
+    #     scalar=conf["scalar_easy"]
+    #     clf=conf["clf_easy"]    
+    #     f1=data[4]
+    #     f1=scalar.transform([f1])
+    #     r=clf.predict(f1)
+    #     if r[0]==0: # machine
+    #         return True 
+    #     else:
+    #         return False
 
-output = rdd_all.map(splitx).filter(filter_xnp).map(get_feats) \
-        .filter(lambda d:testDs(d,conf)).map(lambda d:d[0])
+    # scalar=conf["scalar_hard"]
+    # clf=conf["clf_hard"]    
+    # f2=data[5]
+    # f2=scalar.transform([f2])
+    # r=clf.predict(f2)
+    # if r[0]==0: # machine
+    #     return True
+    #     # return 5
+    # return False
+    # # else:
+    #     return 6
+
+conf={"scalar_easy":scalar_easy,"clf_easy":clf_easy }
+# ,
+# "scalar_hard":scalar_hard,"clf_hard":clf_hard
+
+output = rdd_all.map(splitx).filter(filter_xnp).map(get_feats).filter(lambda d:testDs(d,conf)).map(lambda d:d[0])
+ #.map(lambda d:testDs(d,conf))
+        
+        
 
 num=output.count()
+# num=output.countByValue().items()
 print "l \\ shape numbers:",num
+
+# print output.collect()
 
 output.saveAsTextFile(output_path)
