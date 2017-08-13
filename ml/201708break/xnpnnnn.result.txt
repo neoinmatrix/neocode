@@ -1,0 +1,12 @@
+('inareasharp', 416)
+('inareamiddle', 49),
+('inareaall', 125),
+
+('sharp', 160726),
+('middle', 50901),
+('all', 6315),
+
+('machine_inarea2', 47754),
+('machine', 756785),
+
+]
