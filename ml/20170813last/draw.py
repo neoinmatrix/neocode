@@ -1,5 +1,5 @@
 import numpy as np 
-from data01 import * 
+from data02 import * 
 # print len(sample)
 
 import matplotlib.pyplot as plt
@@ -42,5 +42,5 @@ def draw_analyst_single(idx,mouse,goal,label,notfind='',nmachine='',path='',stop
         plt.show()
 
 
-for i in range(0,600):
-    draw_analyst_single(i,sample[i],0,0,path='./data/pic/',save=True)
+for i in range(0,300):
+    draw_analyst_single(i,sample[i],0,0,path='./data/pic2/',save=True)w

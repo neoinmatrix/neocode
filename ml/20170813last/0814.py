@@ -296,23 +296,51 @@ def get_all(mouse):
 
     return np.array(feat).flatten()
 
-def get_yept(mouse):
+def get_xyn(mouse):
     x=mouse[0]
     y=mouse[1]
     t=mouse[2]
     n=len(mouse[0])
+    start=4 if n>4 else 1
     ynum={}
-    for i in range(1,n):
+    xnum={}
+    for i in range(start,n):
         if i+1>=n:
             break
         ynum.setdefault(y[i],0)
-        ynum[y[i]]+=1
-    ept=0.0
-    # print ynum
+        ynum[y[i]]+=1   
+        xnum.setdefault(x[i],0)
+        xnum[x[i]]+=1
+    epty=0.0
+    eptx=0.0
     for k in ynum:
-        p=float(ynum[k])/float(n)
-        ept+=p*np.log(p)
-    return np.array([ept,n,len(ynum)]).flatten()
+        py=float(ynum[k])/float(n)
+        epty+=py*np.log(py)
+    for k in xnum:
+        px=float(xnum[k])/float(n)
+        eptx+=px*np.log(px)
+    feat=np.array([])
+    feat=np.append(feat,[epty,n,len(ynum)])
+    feat=np.append(feat,[eptx,n,len(xnum)])
+    return feat.flatten()
+
+# def get_yept(mouse):
+#     x=mouse[0]
+#     y=mouse[1]
+#     t=mouse[2]
+#     n=len(mouse[0])
+#     ynum={}
+#     for i in range(1,n):
+#         if i+1>=n:
+#             break
+#         ynum.setdefault(y[i],0)
+#         ynum[y[i]]+=1
+#     ept=0.0
+#     # print ynum
+#     for k in ynum:
+#         p=float(ynum[k])/float(n)
+#         ept+=p*np.log(p)
+#     return np.array([ept,n,len(ynum)]).flatten()
 
 def get_feats(data):
     mouse=data[1]
@@ -322,7 +350,7 @@ def get_feats(data):
     ftmp=np.append(ftmp,get_towards(mouse))
     ftmp=np.append(ftmp,get_actions(mouse))
     ftmp=np.append(ftmp,get_cxcy(mouse))
-    ftmp=np.append(ftmp,get_yept(mouse))
+    ftmp=np.append(ftmp,get_xyn(mouse))
     data.append(ftmp.flatten())
     data.append(get_all(mouse))
     return data
@@ -349,11 +377,11 @@ def get_trains():
             k="sharp"
             vtrs[k].append(f[k])
             lbs[k].append(label)
-        if idx in range(2701,2901):
+        if idx in range(2601,2901):
             k="diff"
             vtrs[k].append(f[k])
             lbs[k].append(label)
-        if idx in range(2601,2801):
+        if idx in range(2601,2901):
             k="middle"
             vtrs[k].append(f[k])
             lbs[k].append(label)
@@ -369,11 +397,12 @@ def get_trains():
         vector=np.array(vtrs[k])
         label=np.array(lbs[k])
         scalar[k]= preprocessing.StandardScaler().fit(vector)
-        vector = preprocessing.scale(vector)    
-        if k=='all':
-            clf[k]= SVC(C=2.5,kernel='linear')
-        else:
-            clf[k]= SVC(C=1.5)
+        vector = preprocessing.scale(vector)  
+        clf[k]= SVC(C=0.8,kernel='linear')  
+        # if k=='all':
+        #     clf[k]= SVC(C=2.5,kernel='linear')
+        # else:
+        #     clf[k]= SVC(C=1.5)
 
         clf[k].fit(vector,label)
     
@@ -382,8 +411,8 @@ def get_trains():
 # test data dealing =================
 def inarea(mouse):
     if mouse[0][0]>=437:
-        if mouse[0][0]<600:
-            if mouse[1][0]<2450:
+        if mouse[0][0]<650:
+            if mouse[1][0]<2550:
                 return True
     return False
 
@@ -406,10 +435,6 @@ def testDs(d,conf):
         if dbg==False:
             return True
         return "inarea"
-    # if inarea2(mouse):
-    #     if dbg==False:
-    #         return True
-    #     return "inarea2"
 
     keys=["sharp","diff","middle","all"]
     for key in keys:
@@ -422,7 +447,7 @@ def testDs(d,conf):
             # if inarea(mouse):
             #     return "inarea"+key
             return key
-    if len(mouse[0])>2 and len(mouse[0])<16:
+    if len(mouse[0])>2 and len(mouse[0])<18:
         if dbg==False:
             return True
         return "sparse"

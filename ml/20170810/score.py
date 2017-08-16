@@ -2,41 +2,41 @@
 import numpy as np
 np.set_printoptions(formatter={'float':lambda x: "%10.2f"%float(x)})
 
-m=188008.0
-s=0.6044
+m=278008.0
+s=0.7144
 n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
 x=s*0.2*(2*n+3*m)
 
-# print n
-# print x
-
-m=185597
-s=0.6121
-n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
-x=s*0.2*(2*n+3*m)
-# print n
-# print x
-
-mh=185597.0
-sh=0.6121
-
-ml=188008.0
-sl=0.6044
-n=1.5*(sh*mh-sl*ml)/(sl-sh)
-# print n
-
-# 202330
-# 0.6457
-# 185597
-# 0.6121
-
-mh=202330.0
-sh=0.6457
-
-ml=185597.0
-sl=0.6121
-n=1.5*(sh*mh-sl*ml)/(sl-sh)
 print n
+print x
+
+# m=185597
+# s=0.6121
+# n=np.array(range(10*10000,40*10000+10000,10000),dtype=np.float)
+# x=s*0.2*(2*n+3*m)
+# # print n
+# # print x
+
+# mh=185597.0
+# sh=0.6121
+
+# ml=188008.0
+# sl=0.6044
+# n=1.5*(sh*mh-sl*ml)/(sl-sh)
+# # print n
+
+# # 202330
+# # 0.6457
+# # 185597
+# # 0.6121
+
+# mh=202330.0
+# sh=0.6457
+
+# ml=185597.0
+# sl=0.6121
+# n=1.5*(sh*mh-sl*ml)/(sl-sh)
+# print n
 # print (202330-185597)/(0.6457-0.6121)
 # n=1.5*(sh*mh-sl*ml)/(sl-sh)
 # m=110598.0

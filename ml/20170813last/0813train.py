@@ -28,7 +28,7 @@ def get_nd(d,idxx):
     d=np.array(d)
     return d[idxx].flatten()
 
-def get_actions(mouse):
+def get_actionsx(mouse):
     x=mouse[0]
     y=mouse[1]
     t=mouse[2]
@@ -62,6 +62,78 @@ def get_actions(mouse):
     feat=np.append(feat,county/float(n))
     feat=np.append(feat,[start.mean(),start.max()])
     feat=np.append(feat,[over.mean(),over.max()])
+
+    return feat.flatten()
+
+def get_xyn(mouse):
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+    n=len(mouse[0])
+    start=4 if n>4 else 1
+    ynum={}
+    xnum={}
+    for i in range(start,n):
+        if i+1>=n:
+            break
+        ynum.setdefault(y[i],0)
+        ynum[y[i]]+=1   
+        xnum.setdefault(x[i],0)
+        xnum[x[i]]+=1
+    epty=0.0
+    eptx=0.0
+    for k in ynum:
+        py=float(ynum[k])/float(n)
+        epty+=py*np.log(py)
+    for k in xnum:
+        px=float(xnum[k])/float(n)
+        eptx+=px*np.log(px)
+    feat=np.array([])
+    feat=np.append(feat,[epty,n,len(ynum)])
+    feat=np.append(feat,[eptx,n,len(xnum)])
+    return feat.flatten()
+
+def get_actions(mouse):
+    x=mouse[0]
+    y=mouse[1]
+    t=mouse[2]
+    n=len(mouse[0])
+    if n>6:
+        x=x[2:-2]
+        y=y[2:-2]
+        t=t[2:-2]
+        n=n-4
+
+    tmpy=y[0]
+    vxt=np.array([0])
+    for i in range(1,n):
+        vx=x[i]-x[i-1]
+        dt=t[i]-t[i-1]
+        if dt==0:
+            continue
+        angle=vx/dt
+        vxt=np.append(vxt,angle)
+        
+    idx=range(0,5)
+    start=get_nd(vxt,idx)
+    idx=range(len(vxt)-5,len(vxt))
+    over=get_nd(vxt,idx)
+
+    feat=[]
+    feat=np.array([])
+    feat=np.append(feat,[start.min(),start.max(),start.mean(),start.std()])
+    feat=np.append(feat,[over.min(),over.max(),over.mean(),over.std()])
+
+    xfive=get_nd(x,range(0,5))
+    tfive=get_nd(t,range(0,5))
+    ax=xfive[4]-xfive[0]
+    at=tfive[4]-tfive[0]
+    mx=(xfive[4]+xfive[0])/2
+    mt=(tfive[4]+tfive[0])/2
+    bx=mx-xfive[2]
+    bt=mt-tfive[2]
+    angle=ax*bx+at*bt
+    feat=np.append(feat,angle)
 
     return feat.flatten()
 
@@ -303,12 +375,14 @@ def end_target(mouse,goal):
 
 def get_feats(idx,mouse,goal,label):
     feats=np.array([])
+    feats=np.append(feats,get_xyn(mouse))
+    feats=np.append(feats,get_actions(mouse))
     # feats=np.append(feats,end_target(mouse,goal))
     # feats=np.append(feats,get_yept(mouse))
     # feats=np.append(feats,get_towards(mouse))
     # feats=np.append(feats,get_actions(mouse))
     # feats=np.append(feats,get_cxcy(mouse))
-    feats=np.append(feats,get_all(mouse))
+    # feats=np.append(feats,get_all(mouse))
     # feats=np.append(feats,get_diff(mouse))
 
     # feats=np.append(feats,get_sharp(mouse))
