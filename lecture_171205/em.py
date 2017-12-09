@@ -70,6 +70,8 @@ def run(Sigma,Mu1,Mu2,k,N,iter_num,Epsilon):
             break
 
 if __name__ == '__main__':
-   run(6,40,20,2,1000,1000,0.0001)
-   plt.hist(X[0,:],35)
-   plt.show()
+    x=[-67,-48,6,8,14,16,23,24,28,29,41,49,56,60,75]
+    # run(6,40,20,2,1000,1000,0.0001)
+    # plt.hist(X[0,:],35)
+    plt.hist(x,35)
+    plt.show()
