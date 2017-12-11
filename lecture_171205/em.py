@@ -23,6 +23,7 @@ def ini_data(Sigma,Mu1,Mu2,k,N):
             X[0,i] = np.random.normal()*Sigma + Mu1
         else:
             X[0,i] = np.random.normal()*Sigma + Mu2
+    # print X.shape
     if isdebug:
         print "***********"
         print u"初始观測数据X："
@@ -71,7 +72,7 @@ def run(Sigma,Mu1,Mu2,k,N,iter_num,Epsilon):
 
 if __name__ == '__main__':
     x=[-67,-48,6,8,14,16,23,24,28,29,41,49,56,60,75]
-    # run(6,40,20,2,1000,1000,0.0001)
-    # plt.hist(X[0,:],35)
-    plt.hist(x,35)
+    run(6,40,20,2,1000,1000,0.0001)
+    plt.hist(X[0,:],35)
+    # plt.hist(x,35)
     plt.show()
