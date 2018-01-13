@@ -25,9 +25,9 @@ q=0.5
 # pi,p,q=m(data,u)
 # print pi,p,q
 
-pi=0.46
-p=0.55
-q=0.67
+# pi=0.46
+# p=0.55
+# q=0.67
 
 for i in range(10):
     u=e(data,pi,p,q)
