@@ -10,9 +10,10 @@ db=torndb.Connection(**config)
 
 # res=db.query(sql)
 # print res
-sql="select start_location as start,end_location as end,length,add_time "
+sql="select start_location as start,end_location as end,line_distance,add_time "
 sql+=" from orders where add_time>UNIX_TIMESTAMP('2018-01-21') "
-sql+=" and district_id in (440117) order by add_time asc"
+sql+=" and add_time<UNIX_TIMESTAMP('2018-01-22') "
+sql+=" and district_id in (440117) order by add_time asc "
 # sql+=" limit 0,10"
 
 res=db.query(sql)
@@ -26,7 +27,7 @@ for v in res:
    data["start_lat"].append(float(v["start"].split(',')[1]))
    data["end_lng"].append(float(v["end"].split(',')[0]))
    data["end_lat"].append(float(v["end"].split(',')[1]))
-   data["length"].append(v["length"])
+   data["length"].append(v["line_distance"])
    data["add_time"].append(v["add_time"])
 import pandas as pd
 df=pd.DataFrame(data)
